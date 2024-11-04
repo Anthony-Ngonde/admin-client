@@ -13,7 +13,7 @@ const Navbar = () => {
         <div className="logo-container">
           {/* Placeholder for logo */}
           <div className="logo-placeholder"></div>
-          <span className="gym-name">Focus Fitness</span>
+          <span className="gym-name">Teeflex Gym & Fitness Center</span>
         </div>
       </div>
 

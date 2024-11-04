@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
-import Navbar from './components/Navbar'
+import Navbar from './components/Navbar/Navbar'
+import{
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from 'react-router-dom'
 
 
 
@@ -21,10 +26,15 @@ const App = () => {
 
   const [message, setMessage] = useState('')
   return (
-    <div className='app'>
-      {/* {message} */}
+    <Router>
+      <div className='app'>
       <Navbar />
+      <Switch>
+        
+      </Switch>
     </div>
+    </Router>
+    
   )
 }
 
