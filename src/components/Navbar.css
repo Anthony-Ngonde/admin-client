@@ -34,6 +34,7 @@
   .navbar-links {
     display: flex;
     gap: 2rem;
+    margin: 0 auto; /* Updated line */
   }
   
   .nav-link {
@@ -47,6 +48,34 @@
   
   .nav-link:hover {
     background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Logout button styles */
+  .logout-container {
+    margin-left: auto;
+    padding-left: 2rem;
+  }
+  
+  .logout-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .logout-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .logout-icon {
+    width: 18px;
+    height: 18px;
   }
   
   .mobile-menu-button {
@@ -109,5 +138,10 @@
     .nav-link {
       width: 100%;
       text-align: center;
+    }
+  
+    .logout-container {
+      margin-left: 0;
+      padding-left: 1rem;
     }
   }
