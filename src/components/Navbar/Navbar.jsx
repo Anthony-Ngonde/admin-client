@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState } from 'react'
 import './Navbar.css'
+import { Link } from 'react-router-dom'
 import { LogOut } from 'lucide-react'
 
 
@@ -19,10 +20,10 @@ const Navbar = () => {
 
       {/* Navigation links */}
       <div className={`navbar-links ${isOpen ? 'active' : ''}`}>
-        <a href="/" className="nav-link">Home</a>
-        <a href="/payment" className="nav-link">Payment</a>
-        <a href="/equipment" className="nav-link">Equipment</a>
-        <a href="/members" className="nav-link">View Members</a>
+        <Link to="/" className="nav-link">Home</Link>
+        <Link to="/payment" className="nav-link">Payment</Link>
+        <Link to="/equipment" className="nav-link">Equipment</Link>
+        <Link to="/members" className="nav-link">View Members</Link>
       </div>
 
       {/* Logout button */}
