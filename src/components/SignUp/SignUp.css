@@ -1,0 +1,55 @@
+.members {
+    padding: 20px;
+    text-align: center;
+}
+
+.members h1 {
+    color: #007bff;
+}
+
+.members-table {
+    width: 80%;
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
+.members-table th,
+.members-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.members-table th {
+    background-color: #007bff;
+    color: white;
+}
+
+.members-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.update-btn, .delete-btn {
+    padding: 8px 12px;
+    margin: 0 4px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.update-btn {
+    background-color: #4CAF50; 
+}
+
+.delete-btn {
+    background-color: #f44336; 
+}
+
+.update-btn:hover {
+    background-color: #45a049;
+}
+
+.delete-btn:hover {
+    background-color: #d32f2f;
+}

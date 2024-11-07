@@ -1,13 +1,19 @@
 import React from 'react'
+import './SignUp.css'
+
 
 
 const SignUp = ({ MemberId, Name, Email }) => {
     return (
-        <div>
-            <h3>{MemberId}</h3>
-            <h3>{Name}</h3>
-            <h3>{Email}</h3>
-        </div>
+        <tr>
+            <td>{MemberId}</td>
+            <td>{Name}</td>
+            <td>{Email}</td>
+            <td>
+                <button className="update-btn">Update</button>
+                <button className="delete-btn">Delete</button>
+            </td>
+        </tr>
     );
 }
 
