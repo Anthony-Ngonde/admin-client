@@ -21,6 +21,16 @@ const Members = () => {
 
     );
 
+    const getAllMembers=()=>{
+        fetch('http://localhost:5000/signup')
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+            setSignUp(data.users || []);
+        })
+        .catch(err => console.log(err));
+    }
+
     const deleteMember=(id)=>{
         console.log(id)
 
@@ -34,7 +44,12 @@ const Members = () => {
 
         fetch(`http://localhost:5000/signup/${id}`, requestOptions)
         .then(res=>res.json())
-        .then(data=>{console.log(data)})
+        .then(data=>{
+
+            console.log(data)
+            getAllMembers()
+        
+        })
         .catch(err=>console.log(err))
     }
 
