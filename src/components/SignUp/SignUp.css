@@ -4,7 +4,7 @@
 }
 
 .members h1 {
-    color: #007bff;
+    color: #00a8ff;
 }
 
 .members-table {
@@ -21,7 +21,7 @@
 }
 
 .members-table th {
-    background-color: #007bff;
+    background-color: #00a8ff;
     color: white;
 }
 
@@ -39,15 +39,16 @@
 }
 
 .update-btn {
-    background-color: #4CAF50; 
+    background-color: #00a8ff; 
 }
 
 .delete-btn {
     background-color: #f44336; 
+    border-radius: 4px;
 }
 
 .update-btn:hover {
-    background-color: #45a049;
+    background-color: #0077cc;
 }
 
 .delete-btn:hover {
