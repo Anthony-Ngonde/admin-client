@@ -1,0 +1,58 @@
+.equipment {
+    text-align: center;
+    margin: 20px auto;
+    width: 90%;
+}
+
+.equipment h1 {
+    color: #007bff;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.equipment-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.equipment-table th {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+.equipment-table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.equipment-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.equipment-table th, .equipment-table td {
+    border: 1px solid #ddd;
+}
+
+.equipment-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.equipment-table .delete-btn {
+    background-color: #ff4d4d;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.equipment-table .delete-btn:hover {
+    background-color: #e60000;
+}
+
+.equipment-table .update-btn:hover {
+    background-color: #0077cc;
+}

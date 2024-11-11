@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './Equipment.css'
 
 const Equipment = () => {
     const [equipment, setEquipment] = useState([]);
@@ -59,7 +60,7 @@ const Equipment = () => {
                             <td>{item.quantity}</td>
                             <td>{item.description}</td>
                             <td>
-                            {/* <button className="update-btn">Update</button> */}
+                            <button className='update-btn'>Update</button>
                                 <button className='delete-btn' onClick={() => deleteEquipment(item.id)}>Delete</button>
                             </td>
                         </tr>
