@@ -11,7 +11,7 @@ const SignUp = ({ MemberId, Name, Email, onDelete }) => {
             <td>{Name}</td>
             <td>{Email}</td>
             <td>
-                {/* <button className="update-btn" variant="primary" onClick={onClick}>Update</button> */}
+                {/* <button className="update-btn">Update</button> */}
                 <button className="delete-btn" onClick={onDelete}>Delete</button>
             </td>
         </tr>
