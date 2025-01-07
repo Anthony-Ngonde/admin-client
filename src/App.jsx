@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Dashboard from './components/Dashboard/Dashboard'
+import Navbar from './components/Navbar/Navbar'
+// import Dashboard from './components/Dashboard/Dashboard'
 // import Payment from './components/Payment/Payment'
 // import Members from './components/Members/Members'
 
@@ -21,11 +22,11 @@ const App = () => {
   return (
     <Router>
       <div className='app'>
-        {/* <Navbar /> */}
+        <Navbar />
         <Routes>
           {/* <Route path="/members" element={<Members />} /> */}
           {/* <Route path="/payment" element={<Payment />} /> */}
-          <Route path="/" element={<Dashboard />} />
+          {/* <Route path="/" element={<Dashboard />} /> */}
         </Routes>
       </div>
     </Router>
