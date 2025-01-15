@@ -1,58 +1,99 @@
-import React, { useEffect, useState } from "react";
-import "./Members.css";
-import { Search, Edit2, Trash2 } from "lucide-react";
+import React, { useEffect, useState } from 'react';
+import './Members.css';
+import { Search, Edit2, Trash2 } from 'lucide-react';
 
 //Importing the server url
-import { SERVER_URL } from "../../services/api";
+import { SERVER_URL } from '../../services/api';
+import { z } from 'zod';
+import toast from 'react-hot-toast';
+
+//Handling passing in correct mobile numbers
+const phoneRegex = new RegExp(
+  /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
+);
+
+//Form validation for adding members
+const memberSchema = z.object({
+  f_name: z.string().min(1, {
+    message: 'First name is required',
+  }),
+  l_name: z.string().min(1, {
+    message: 'Last name is required',
+  }),
+  phone_number: z.string().regex(phoneRegex, {
+    message: 'Invalid phone number',
+  }),
+  email: z.string().min(1).email({
+    message: 'Invalid email address',
+  }),
+});
 
 const Members = () => {
+  //Responsible for fetching new members
   const [members, setMembers] = useState([]);
-  const [newMember, setNewMember] = useState({
-    f_name: "",
-    l_name: "",
-    phone_number: "",
-    email: "",
-  });
+
+  //Checking on the submitting state
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Function to register a new member
-  const registerNewMember = async () => {
-    if (isSubmitting) return;
+  //Updating errors encountered when adding new members
+  const [errors, setErrors] = useState({});
 
-    if (
-      !newMember.f_name.trim() ||
-      !newMember.l_name.trim() ||
-      !newMember.phone_number.trim() ||
-      !newMember.email.trim()
-    ) {
-      alert("All fields are required!");
-      return;
-    }
+  //Adding new members details
+  const [newMember, setNewMember] = useState({
+    f_name: '',
+    l_name: '',
+    phone_number: '',
+    email: '',
+  });
 
+  //Handling the user input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setNewMember((prev) => ({ ...prev, [name]: value }));
+  };
+
+  //Handling the form submittion
+  const onSubmit = async (e) => {
+    e.preventDefault();
     setIsSubmitting(true);
+
     try {
+      //Parsing in the data through zod form handler
+      memberSchema.parse(newMember);
+      //Catching any errors
+      setErrors({});
+
       const response = await fetch(`${SERVER_URL}/members`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newMember),
+        body: JSON.stringify({
+          f_name: newMember.f_name,
+          l_name: newMember.l_name,
+          phone_number: newMember.phone_number,
+          email: newMember.email,
+        }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to register new member");
-      }
+      const result = await response.json();
 
-      const data = await response.json();
-      if (data.member) {
-        setMembers((prevMembers) => [...prevMembers, data.member]); // Add new member optimistically
+      //Checking if the response is ok
+      if (response.ok) {
+        //Message from the backend
+        toast.success(result.message);
+      } else {
+        toast.error(result.message);
       }
-      setNewMember({ f_name: "", l_name: "", phone_number: "", email: "" });
-
-      fetchMembers();
-    } catch (error) {
-      console.error("Error registering member:", error);
-      alert("Failed to register new member. Please try again.");
+    } catch (err) {
+      //Handling zod errors
+      if (err instanceof z.ZodError) {
+        const formattedErrors = {};
+        err.errors.forEach((error) => {
+          formattedErrors[error.path[0]] = error.message;
+        });
+        setErrors(formattedErrors);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -63,35 +104,39 @@ const Members = () => {
     try {
       const response = await fetch(`${SERVER_URL}/members`);
       if (!response.ok) {
-        throw new Error("Failed to fetch members");
+        throw new Error('Failed to fetch members');
       }
 
       const data = await response.json();
       setMembers(Array.isArray(data.members) ? data.members : []); // Ensure members is an array
     } catch (error) {
-      console.error("Error fetching members:", error);
+      console.error('Error fetching members:', error);
     }
   };
 
   // Function to handle member deletion
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this member?");
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete this member?'
+    );
     if (!confirmDelete) return;
 
     try {
       const response = await fetch(`${SERVER_URL}/members/${id}`, {
-        method: "DELETE",
+        method: 'DELETE',
       });
 
       if (!response.ok) {
-        throw new Error("Failed to delete member");
+        throw new Error('Failed to delete member');
       }
 
       // Remove member from state
-      setMembers((prevMembers) => prevMembers.filter((member) => member.id !== id));
+      setMembers((prevMembers) =>
+        prevMembers.filter((member) => member.id !== id)
+      );
     } catch (error) {
-      console.error("Error deleting member:", error);
-      alert("Failed to delete member. Please try again.");
+      console.error('Error deleting member:', error);
+      alert('Failed to delete member. Please try again.');
     }
   };
 
@@ -114,43 +159,60 @@ const Members = () => {
       </div>
 
       {/* Registration Form */}
-      <div className="registration-form">
-        <div className="form-row">
-          <input
-            type="text"
-            placeholder="First Name"
-            value={newMember.f_name}
-            onChange={(e) => setNewMember({ ...newMember, f_name: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="Last Name"
-            value={newMember.l_name}
-            onChange={(e) => setNewMember({ ...newMember, l_name: e.target.value })}
-          />
-        </div>
-        <div className="form-row">
-          <input
-            type="tel"
-            placeholder="Phone Number"
-            value={newMember.phone_number}
-            onChange={(e) => setNewMember({ ...newMember, phone_number: e.target.value })}
-          />
-          <input
-            type="email"
-            placeholder="Email Address"
-            value={newMember.email}
-            onChange={(e) => setNewMember({ ...newMember, email: e.target.value })}
-          />
-        </div>
-        <button
-          className="register-btn"
-          onClick={registerNewMember}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Registering..." : "Register New Member"}
-        </button>
-      </div>
+      <form className="registration-form" onSubmit={onSubmit}>
+  <div className="form-row">
+    <div>
+      <input
+        type="text"
+        name="f_name"
+        placeholder="John"
+        value={newMember.f_name}
+        onChange={handleChange}
+      />
+      {errors?.f_name && <p className="error-message">{errors.f_name}</p>}
+    </div>
+
+    <div>
+      <input
+        type="text"
+        name="l_name"
+        placeholder="Doe"
+        value={newMember.l_name}
+        onChange={handleChange}
+      />
+      {errors?.l_name && <p className="error-message">{errors.l_name}</p>}
+    </div>
+  </div>
+
+  <div className="form-row">
+    <div>
+      <input
+        type="tel"
+        name="phone_number"
+        placeholder="0712345678"
+        value={newMember.phone_number}
+        onChange={handleChange}
+      />
+      {errors?.phone_number && <p className="error-message">{errors.phone_number}</p>}
+    </div>
+
+    <div>
+      <input
+        type="email"
+        name="email"
+        placeholder="member@gmail.com"
+        value={newMember.email}
+        onChange={handleChange}
+      />
+      {errors?.email && <p className="error-message">{errors.email}</p>}
+    </div>
+  </div>
+
+  <button className="register-btn" type="submit" disabled={isSubmitting}>
+    {isSubmitting ? "Registering..." : "Register New Member"}
+  </button>
+</form>
+
 
       {/* Members Table */}
       <div className="members-table">
@@ -173,10 +235,16 @@ const Members = () => {
                 <td>{member.email}</td>
                 <td>
                   <div className="action-buttons">
-                    <button className="edit-btn" onClick={() => handleEdit(member.id)}>
+                    <button
+                      className="edit-btn"
+                      onClick={() => handleEdit(member.id)}
+                    >
                       <Edit2 size={16} />
                     </button>
-                    <button className="delete-btn" onClick={() => handleDelete(member.id)}>
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDelete(member.id)}
+                    >
                       <Trash2 size={16} />
                     </button>
                   </div>
