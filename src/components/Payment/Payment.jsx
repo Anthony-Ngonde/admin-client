@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./Payment.css";
 import { Calendar, Edit2, Trash2 } from "lucide-react";
 
+//Importing the server url
+import {SERVER_URL} from '../../services/api'
 const Payment = () => {
   const [paymentData, setPaymentData] = useState([]);
   const [formData, setFormData] = useState({
@@ -48,7 +50,7 @@ const Payment = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:5000/payments", {
+      const response = await fetch(`${SERVER_URL}/payments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -94,7 +96,7 @@ const Payment = () => {
   // Handle payment deletion
   const handleDeletePayment = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/payments/${id}`, {
+      const response = await fetch(`${SERVER_URL}/payments/${id}`, {
         method: "DELETE",
       });
 
