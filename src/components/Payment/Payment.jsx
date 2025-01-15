@@ -1,70 +1,224 @@
-import React, {useState} from 'react'
-import './Payment.css'
+import React, { useEffect, useState } from "react";
+import "./Payment.css";
+import { Calendar, Edit2, Trash2 } from "lucide-react";
 
-
-const Payment = ({ onAddPayment }) => {
+const Payment = () => {
+  const [paymentData, setPaymentData] = useState([]);
   const [formData, setFormData] = useState({
-    name: '',
-    plan: 'Daily',
-    price: '',
-    paidDate: ''
+    phone_number: "",
+    transaction_id: "",
+    plan: "",
+    amount: "",
+    date: "",
   });
-  const [success, setSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  // Fetch payment data
+  const fetchPaymentData = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/payments");
+      if (!response.ok) {
+        throw new Error("Failed to fetch payment data");
+      }
+      const data = await response.json();
+      setPaymentData(data);
+    } catch (error) {
+      console.error("Error fetching payment data:", error);
+    }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch('http://localhost:5000/payments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      const result = await response.json();
-      if (response.ok) {
-        setSuccess(true);
-        onAddPayment(result); // Pass new payment data to Home component
-      }
-    } catch (error) {
-      console.error('Error adding payment:', error);
-    }
+  useEffect(() => {
+    fetchPaymentData();
+  }, []);
 
-    // Clear form and remove success message after 3 seconds
-    setFormData({ name: '', plan: 'Daily', price: '', paidDate: '' });
-    setTimeout(() => setSuccess(false), 3000);
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
+  // Handle form submission
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("http://localhost:5000/payments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add payment");
+      }
+
+      const newPayment = await response.json();
+
+      // Optimistically update the state with the new payment
+      setPaymentData((prevPayments) => [
+        ...prevPayments,
+        {
+          ...newPayment,
+          date: newPayment.date
+            ? new Date(newPayment.date).toISOString()
+            : new Date().toISOString(),
+        },
+      ]);
+
+      // Reset the form
+      setFormData({
+        phone_number: "",
+        transaction_id: "",
+        plan: "",
+        amount: "",
+        date: "",
+      });
+
+      // Refetch the payment data to ensure consistency
+      fetchPaymentData();
+    } catch (error) {
+      console.error("Error adding payment:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Handle payment deletion
+  const handleDeletePayment = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5000/payments/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete payment");
+      }
+
+      // Refetch the updated payment data after deletion
+      fetchPaymentData();
+    } catch (error) {
+      console.error("Error deleting payment:", error);
+    }
   };
 
   return (
-    <div className='payment'>
-      <h1>Payment Page</h1>
-      {success && <div className="success-message">✔️ Payment added successfully!</div>}
-      <form onSubmit={handleSubmit}>
-        <label>
-          Name:
-          <input type="text" name="name" value={formData.name} onChange={handleChange} required />
-        </label>
-        <label>
-          Plan:
-          <select name="plan" value={formData.plan} onChange={handleChange} required>
-            <option value="Daily">Daily</option>
-            <option value="Weekly">Weekly</option>
-            <option value="Monthly">Monthly</option>
+    <div className="payment-page">
+      {/* Payment Form */}
+      <form className="payment-form" onSubmit={handleFormSubmit}>
+        <div className="form-row">
+          <input
+            type="text"
+            name="phone_number"
+            placeholder="Phone Number"
+            value={formData.phone_number}
+            onChange={handleInputChange}
+            required
+          />
+          <input
+            type="text"
+            name="transaction_id"
+            placeholder="Transaction ID"
+            value={formData.transaction_id}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        <div className="form-row">
+          <select
+            name="plan"
+            value={formData.plan}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="" disabled>
+              Plan
+            </option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
           </select>
-        </label>
-        <label>
-          Price:
-          <input type="number" name="price" value={formData.price} onChange={handleChange} required />
-        </label>
-        <label>
-          Paid Date:
-          <input type="date" name="paidDate" value={formData.paidDate} onChange={handleChange} required />
-        </label>
-        <button type="submit">Submit Payment</button>
+          <input
+            type="number"
+            name="amount"
+            placeholder="Amount"
+            value={formData.amount}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        <div className="form-row">
+          <div className="date-input">
+            <input
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleInputChange}
+              required
+            />
+            <Calendar size={20} />
+          </div>
+        </div>
+        <button type="submit" className="add-payment-btn" disabled={isSubmitting}>
+          {isSubmitting ? "Adding..." : "Add Payment"}
+        </button>
       </form>
+
+      {/* Payment Table */}
+      <div className="payment-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Phone Number</th>
+              <th>Transaction ID</th>
+              <th>Plan</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th>Member ID</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {paymentData.map((payment) => (
+              <tr key={payment.id}>
+                <td>{payment.phone_number}</td>
+                <td>{payment.transaction_id}</td>
+                <td>{payment.plan}</td>
+                <td>{payment.amount}</td>
+                <td>
+                  {payment.date
+                    ? new Date(payment.date).toLocaleDateString()
+                    : "Invalid Date"}
+                </td>
+                <td>{payment.member_id}</td>
+                <td>
+                  <div className="action-buttons">
+                    <button
+                      className="edit-btn"
+                      onClick={() => console.log("Edit feature not implemented")}
+                    >
+                      <Edit2 size={16} />
+                    </button>
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDeletePayment(payment.id)}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
