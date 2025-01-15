@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import "./Members.css";
 import { Search, Edit2, Trash2 } from "lucide-react";
 
+//Importing the server url
+import { SERVER_URL } from "../../services/api";
+
 const Members = () => {
   const [members, setMembers] = useState([]);
   const [newMember, setNewMember] = useState({
@@ -28,7 +31,7 @@ const Members = () => {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch("http://localhost:5000/members", {
+      const response = await fetch(`${SERVER_URL}/members`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,7 +61,7 @@ const Members = () => {
   // Function to fetch all members
   const fetchMembers = async () => {
     try {
-      const response = await fetch("http://localhost:5000/members");
+      const response = await fetch(`${SERVER_URL}/members`);
       if (!response.ok) {
         throw new Error("Failed to fetch members");
       }
@@ -76,7 +79,7 @@ const Members = () => {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/members/${id}`, {
+      const response = await fetch(`${SERVER_URL}/members/${id}`, {
         method: "DELETE",
       });
 
