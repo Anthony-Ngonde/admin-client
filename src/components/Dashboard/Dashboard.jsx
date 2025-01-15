@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
 import { Users } from "lucide-react";
 
+//Importing the server url
+import { SERVER_URL } from "../../services/api";
+
 const Dashboard = () => {
   const [totalMembers, setTotalMembers] = useState(0); // State for total members
   const [activeMembers, setActiveMembers] = useState(0); // State for active members
@@ -12,7 +15,7 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
       try {
         // Fetch total members
-        const membersResponse = await fetch("http://localhost:5000/members");
+        const membersResponse = await fetch(`${SERVER_URL}/members`);
         if (!membersResponse.ok) {
           throw new Error("Failed to fetch total members");
         }
@@ -20,7 +23,7 @@ const Dashboard = () => {
         setTotalMembers(membersData.members.length); // Set total members count
 
         // Fetch active members
-        const paymentsResponse = await fetch("http://localhost:5000/payments");
+        const paymentsResponse = await fetch(`${SERVER_URL}/payments`);
         if (!paymentsResponse.ok) {
           throw new Error("Failed to fetch active members");
         }
@@ -31,7 +34,7 @@ const Dashboard = () => {
         setActiveMembers(uniqueActiveMembers.size);
 
         // Fetch actives data
-        const activesResponse = await fetch("http://localhost:5000/actives");
+        const activesResponse = await fetch(`${SERVER_URL}/actives`);
         if (!activesResponse.ok) {
           throw new Error("Failed to fetch actives data");
         }
