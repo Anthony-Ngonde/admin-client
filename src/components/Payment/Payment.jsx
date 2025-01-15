@@ -1,31 +1,32 @@
-import React, { useEffect, useState } from "react";
-import "./Payment.css";
-import { Calendar, Edit2, Trash2 } from "lucide-react";
+import React, { useEffect, useState } from 'react';
+import './Payment.css';
+import { Calendar, Edit2, Trash2 } from 'lucide-react';
 
 //Importing the server url
-import {SERVER_URL} from '../../services/api'
+import { SERVER_URL } from '../../services/api';
+
 const Payment = () => {
   const [paymentData, setPaymentData] = useState([]);
   const [formData, setFormData] = useState({
-    phone_number: "",
-    transaction_id: "",
-    plan: "",
-    amount: "",
-    date: "",
+    phone_number: '',
+    transaction_id: '',
+    plan: '',
+    amount: '',
+    date: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fetch payment data
   const fetchPaymentData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/payments");
+      const response = await fetch(`${SERVER_URL}/payments`);
       if (!response.ok) {
-        throw new Error("Failed to fetch payment data");
+        throw new Error('Failed to fetch payment data');
       }
       const data = await response.json();
       setPaymentData(data);
     } catch (error) {
-      console.error("Error fetching payment data:", error);
+      console.error('Error fetching payment data:', error);
     }
   };
 
@@ -51,15 +52,15 @@ const Payment = () => {
 
     try {
       const response = await fetch(`${SERVER_URL}/payments`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to add payment");
+        throw new Error('Failed to add payment');
       }
 
       const newPayment = await response.json();
@@ -77,17 +78,17 @@ const Payment = () => {
 
       // Reset the form
       setFormData({
-        phone_number: "",
-        transaction_id: "",
-        plan: "",
-        amount: "",
-        date: "",
+        phone_number: '',
+        transaction_id: '',
+        plan: '',
+        amount: '',
+        date: '',
       });
 
       // Refetch the payment data to ensure consistency
       fetchPaymentData();
     } catch (error) {
-      console.error("Error adding payment:", error);
+      console.error('Error adding payment:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -97,17 +98,17 @@ const Payment = () => {
   const handleDeletePayment = async (id) => {
     try {
       const response = await fetch(`${SERVER_URL}/payments/${id}`, {
-        method: "DELETE",
+        method: 'DELETE',
       });
 
       if (!response.ok) {
-        throw new Error("Failed to delete payment");
+        throw new Error('Failed to delete payment');
       }
 
       // Refetch the updated payment data after deletion
       fetchPaymentData();
     } catch (error) {
-      console.error("Error deleting payment:", error);
+      console.error('Error deleting payment:', error);
     }
   };
 
@@ -168,8 +169,12 @@ const Payment = () => {
             <Calendar size={20} />
           </div>
         </div>
-        <button type="submit" className="add-payment-btn" disabled={isSubmitting}>
-          {isSubmitting ? "Adding..." : "Add Payment"}
+        <button
+          type="submit"
+          className="add-payment-btn"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Adding...' : 'Add Payment'}
         </button>
       </form>
 
@@ -197,14 +202,16 @@ const Payment = () => {
                 <td>
                   {payment.date
                     ? new Date(payment.date).toLocaleDateString()
-                    : "Invalid Date"}
+                    : 'Invalid Date'}
                 </td>
                 <td>{payment.member_id}</td>
                 <td>
                   <div className="action-buttons">
                     <button
                       className="edit-btn"
-                      onClick={() => console.log("Edit feature not implemented")}
+                      onClick={() =>
+                        console.log('Edit feature not implemented')
+                      }
                     >
                       <Edit2 size={16} />
                     </button>
