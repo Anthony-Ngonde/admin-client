@@ -1,59 +1,129 @@
 import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
-import { Users } from "lucide-react";
+import { Users, Bell } from "lucide-react";
 
 const Dashboard = () => {
-  const [totalMembers, setTotalMembers] = useState(0); // State for total members
-  const [activeMembers, setActiveMembers] = useState(0); // State for active members
-  const [activeData, setActiveData] = useState([]); // State for active table data
+  const [totalMembers, setTotalMembers] = useState(0);
+  const [activeMembers, setActiveMembers] = useState(0);
+  const [activeData, setActiveData] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch data from the backend
+  // Fetch dashboard data
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        // Fetch total members
         const membersResponse = await fetch("http://localhost:5000/members");
-        if (!membersResponse.ok) {
-          throw new Error("Failed to fetch total members");
-        }
+        if (!membersResponse.ok) throw new Error("Failed to fetch total members");
         const membersData = await membersResponse.json();
-        setTotalMembers(membersData.members.length); // Set total members count
+        setTotalMembers(membersData.members.length);
 
-        // Fetch active members
         const paymentsResponse = await fetch("http://localhost:5000/payments");
-        if (!paymentsResponse.ok) {
-          throw new Error("Failed to fetch active members");
-        }
+        if (!paymentsResponse.ok) throw new Error("Failed to fetch active members");
         const paymentsData = await paymentsResponse.json();
-        const uniqueActiveMembers = new Set(
-          paymentsData.map((payment) => payment.member_id)
-        ); // Count unique member IDs in payments
+        const uniqueActiveMembers = new Set(paymentsData.map((payment) => payment.member_id));
         setActiveMembers(uniqueActiveMembers.size);
 
-        // Fetch actives data
         const activesResponse = await fetch("http://localhost:5000/actives");
-        if (!activesResponse.ok) {
-          throw new Error("Failed to fetch actives data");
-        }
+        if (!activesResponse.ok) throw new Error("Failed to fetch actives data");
         const activesData = await activesResponse.json();
-        setActiveData(activesData); // Set actives table data
+        setActiveData(activesData);
+
+        await fetchNotifications(); // Fetch notifications initially
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       }
     };
 
     fetchDashboardData();
+    const intervalId = setInterval(fetchNotifications, 10000); // Poll notifications every 10 seconds
+
+    return () => clearInterval(intervalId); // Cleanup interval on component unmount
   }, []);
+
+  // Fetch notifications
+  const fetchNotifications = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/notifications");
+      if (!response.ok) throw new Error("Failed to fetch notifications");
+      const notificationsData = await response.json();
+      setNotifications(notificationsData);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
+  // Mark a notification as read
+  const markAsRead = async (id) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`http://localhost:5000/notification/${id}`, {
+        method: "PATCH",
+      });
+      if (!response.ok) throw new Error("Failed to mark notification as read");
+      setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, is_read: true } : n)));
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Delete a notification
+  const deleteNotification = async (id) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`http://localhost:5000/notification/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Failed to delete notification");
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    } catch (error) {
+      console.error("Error deleting notification:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="dashboard">
       <div className="welcome-card">
         <h2>Welcome Back, TeeFlex Admin 👋</h2>
         <p>This is where you get all the summary</p>
+        <div
+          className="notification-bell"
+          onClick={() => setShowNotifications(!showNotifications)}
+        >
+          <Bell size={24} />
+          {notifications.some((n) => !n.is_read) && <span className="notification-dot" />}
+        </div>
+        {showNotifications && (
+          <div className="notifications-dropdown">
+            {isLoading ? (
+              <p>Loading...</p>
+            ) : notifications.length === 0 ? (
+              <p>No notifications</p>
+            ) : (
+              notifications.map((notification) => (
+                <div key={notification.id} className="notification-item">
+                  <h4>{notification.title}</h4>
+                  <p>{notification.message}</p>
+                  <small>{new Date(notification.created_at).toLocaleString()}</small>
+                  <div className="notification-actions">
+                    {!notification.is_read && (
+                      <button onClick={() => markAsRead(notification.id)}>Mark as Read</button>
+                    )}
+                    <button onClick={() => deleteNotification(notification.id)}>Delete</button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
       </div>
 
       <div className="metrics-container">
-        {/* Total Members */}
         <div className="metric-card">
           <div className="metric-icon">
             <Users size={24} />
@@ -64,7 +134,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Active Members */}
         <div className="metric-card">
           <div className="metric-icon">
             <Users size={24} />
@@ -90,7 +159,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Actives Table */}
         <div className="members-table">
           <table>
             <thead>
@@ -151,82 +219,3 @@ export default Dashboard;
 
 
 
-
-
-
-
-
-
-
-
-
-// import React from "react";
-// import "./Dashboard.css";
-// import { FaUserFriends, FaUsers } from "react-icons/fa";
-
-// const Dashboard = () => {
-//   return (
-//     <div className="dashboard-container">
-//       {/* Welcome Card */}
-//       <div className="welcome-card">
-//         <h3>Welcome Back, Teflex Admin 👋</h3>
-//         <p>This is where you get all the summary</p>
-//       </div>
-
-//       {/* Summary Cards */}
-//       <div className="summary-cards">
-//         <div className="card">
-//           <FaUsers className="icon" />
-//           <h4>Total Members</h4>
-//           <p>50</p>
-//         </div>
-//         <div className="card">
-//           <FaUserFriends className="icon" />
-//           <h4>Active Members</h4>
-//           <p>35</p>
-//         </div>
-//       </div>
-
-//       {/* Active Members Table */}
-//       <div className="active-members">
-//         <h3>Active Members</h3>
-//         <div className="table-header">
-//           <button className="search-btn">Search</button>
-//           <button className="sort-btn">Sort By</button>
-//         </div>
-//         <table>
-//           <thead>
-//             <tr>
-//               <th>Name</th>
-//               <th>Date Paid</th>
-//               <th>Expiry Date</th>
-//               <th>Status</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             <tr>
-//               <td>Jane Doe</td>
-//               <td>01/01/2025</td>
-//               <td>01/01/2026</td>
-//               <td>Active</td>
-//             </tr>
-//             <tr>
-//               <td>John Doe</td>
-//               <td>01/02/2025</td>
-//               <td>01/02/2026</td>
-//               <td>Active</td>
-//             </tr>
-//             <tr>
-//               <td>Guido Van</td>
-//               <td>01/03/2025</td>
-//               <td>01/03/2026</td>
-//               <td>Active</td>
-//             </tr>
-//           </tbody>
-//         </table>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Dashboard;
