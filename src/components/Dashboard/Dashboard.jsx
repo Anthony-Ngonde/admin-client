@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
 import Navbar from '../Navbar/Navbar'
-import { Users } from "lucide-react";
+import { Users,Bell } from "lucide-react";
 
 //Importing the server url
 import { SERVER_URL } from "../../services/api";
