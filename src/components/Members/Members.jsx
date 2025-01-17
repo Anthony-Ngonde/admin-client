@@ -11,6 +11,7 @@ const Members = () => {
     email: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editMember, setEditMember] = useState(null); // State to track the member being edited
 
   // Function to register a new member
   const registerNewMember = async () => {
@@ -92,10 +93,43 @@ const Members = () => {
     }
   };
 
-  // Function to handle editing (to be implemented)
-  const handleEdit = (id) => {
-    alert(`Edit action for member with ID: ${id}`);
-    // Implement the edit logic here
+  // Function to handle editing
+  const handleEdit = (member) => {
+    setEditMember(member); // Set the selected member to edit
+  };
+
+  // Function to save the edited member
+  const saveEditedMember = async () => {
+    if (!editMember.f_name || !editMember.l_name || !editMember.phone_number || !editMember.email) {
+      alert("All fields are required!");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5000/members/${editMember.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editMember),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update member");
+      }
+
+      // Update the state with the edited member
+      setMembers((prevMembers) =>
+        prevMembers.map((member) =>
+          member.id === editMember.id ? { ...editMember } : member
+        )
+      );
+
+      setEditMember(null); // Clear the edit state
+    } catch (error) {
+      console.error("Error updating member:", error);
+      alert("Failed to update member. Please try again.");
+    }
   };
 
   useEffect(() => {
@@ -149,6 +183,46 @@ const Members = () => {
         </button>
       </div>
 
+      {/* Edit Form */}
+      {editMember && (
+        <div className="edit-form">
+          <h3>Edit Member</h3>
+          <div className="form-row">
+            <input
+              type="text"
+              placeholder="First Name"
+              value={editMember.f_name}
+              onChange={(e) => setEditMember({ ...editMember, f_name: e.target.value })}
+            />
+            <input
+              type="text"
+              placeholder="Last Name"
+              value={editMember.l_name}
+              onChange={(e) => setEditMember({ ...editMember, l_name: e.target.value })}
+            />
+          </div>
+          <div className="form-row">
+            <input
+              type="tel"
+              placeholder="Phone Number"
+              value={editMember.phone_number}
+              onChange={(e) =>
+                setEditMember({ ...editMember, phone_number: e.target.value })
+              }
+            />
+            <input
+              type="email"
+              placeholder="Email Address"
+              value={editMember.email}
+              onChange={(e) => setEditMember({ ...editMember, email: e.target.value })}
+            />
+          </div>
+          <button className="save-btn" onClick={saveEditedMember}>
+            Save Changes
+          </button>
+        </div>
+      )}
+
       {/* Members Table */}
       <div className="members-table">
         <table>
@@ -170,7 +244,7 @@ const Members = () => {
                 <td>{member.email}</td>
                 <td>
                   <div className="action-buttons">
-                    <button className="edit-btn" onClick={() => handleEdit(member.id)}>
+                    <button className="edit-btn" onClick={() => handleEdit(member)}>
                       <Edit2 size={16} />
                     </button>
                     <button className="delete-btn" onClick={() => handleDelete(member.id)}>

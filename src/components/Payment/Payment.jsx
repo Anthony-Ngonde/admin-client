@@ -12,6 +12,7 @@ const Payment = () => {
     date: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editingPaymentId, setEditingPaymentId] = useState(null); // Tracks the payment being edited
 
   // Fetch payment data
   const fetchPaymentData = async () => {
@@ -40,7 +41,7 @@ const Payment = () => {
     }));
   };
 
-  // Handle form submission
+  // Handle form submission (Add or Edit)
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
@@ -48,8 +49,13 @@ const Payment = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:5000/payments", {
-        method: "POST",
+      const url = editingPaymentId
+        ? `http://localhost:5000/payments/${editingPaymentId}`
+        : "http://localhost:5000/payments";
+      const method = editingPaymentId ? "PATCH" : "POST";
+
+      const response = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
         },
@@ -57,23 +63,25 @@ const Payment = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to add payment");
+        throw new Error(`Failed to ${editingPaymentId ? "edit" : "add"} payment`);
       }
 
-      const newPayment = await response.json();
+      // If editing, update the payment in the table
+      if (editingPaymentId) {
+        setPaymentData((prevPayments) =>
+          prevPayments.map((payment) =>
+            payment.id === editingPaymentId
+              ? { ...payment, ...formData }
+              : payment
+          )
+        );
+      } else {
+        // If adding, fetch the new payment data
+        const newPayment = await response.json();
+        setPaymentData((prevPayments) => [...prevPayments, newPayment]);
+      }
 
-      // Optimistically update the state with the new payment
-      setPaymentData((prevPayments) => [
-        ...prevPayments,
-        {
-          ...newPayment,
-          date: newPayment.date
-            ? new Date(newPayment.date).toISOString()
-            : new Date().toISOString(),
-        },
-      ]);
-
-      // Reset the form
+      // Reset the form and editing state
       setFormData({
         phone_number: "",
         transaction_id: "",
@@ -81,14 +89,24 @@ const Payment = () => {
         amount: "",
         date: "",
       });
-
-      // Refetch the payment data to ensure consistency
-      fetchPaymentData();
+      setEditingPaymentId(null);
     } catch (error) {
-      console.error("Error adding payment:", error);
+      console.error(`Error ${editingPaymentId ? "editing" : "adding"} payment:`, error);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Handle edit button click
+  const handleEditPayment = (payment) => {
+    setEditingPaymentId(payment.id);
+    setFormData({
+      phone_number: payment.phone_number,
+      transaction_id: payment.transaction_id,
+      plan: payment.plan,
+      amount: payment.amount,
+      date: payment.date ? new Date(payment.date).toISOString().split("T")[0] : "",
+    });
   };
 
   // Handle payment deletion
@@ -167,7 +185,13 @@ const Payment = () => {
           </div>
         </div>
         <button type="submit" className="add-payment-btn" disabled={isSubmitting}>
-          {isSubmitting ? "Adding..." : "Add Payment"}
+          {isSubmitting
+            ? editingPaymentId
+              ? "Saving..."
+              : "Adding..."
+            : editingPaymentId
+            ? "Save Changes"
+            : "Add Payment"}
         </button>
       </form>
 
@@ -202,7 +226,7 @@ const Payment = () => {
                   <div className="action-buttons">
                     <button
                       className="edit-btn"
-                      onClick={() => console.log("Edit feature not implemented")}
+                      onClick={() => handleEditPayment(payment)}
                     >
                       <Edit2 size={16} />
                     </button>
