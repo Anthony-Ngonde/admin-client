@@ -169,7 +169,6 @@ const Payment = () => {
               onChange={handleInputChange}
               required
             />
-            <Calendar size={20} />
           </div>
         </div>
         <button
