@@ -101,6 +101,60 @@
     padding: 10px;
     border-bottom: 1px solid #eee;
   }
+  .notification-bell {
+    position: absolute;
+    top: 20px; /* Adjust based on your layout */
+    right: 20px; /* Push it to the right side */
+    cursor: pointer;
+  }
+  
+  .notification-dot {
+    position: absolute;
+    top: -5px;
+    right: -10px; /* Adjust position relative to the bell */
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+    display: none; /* Initially hidden */
+  }
+  /* Notification Actions Container */
+.notification-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Base Styles for Buttons */
+.notification-actions button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Mark as Read Button */
+.notification-actions button:first-of-type {
+  background-color: #4caf50; /* Green */
+  color: white;
+}
+
+.notification-actions button:first-of-type:hover {
+  background-color: #45a049;
+}
+
+/* Delete Button */
+.notification-actions button:last-of-type {
+  background-color: #f44336; /* Red */
+  color: white;
+}
+
+.notification-actions button:last-of-type:hover {
+  background-color: #e53935;
+}
+
   
   
 
