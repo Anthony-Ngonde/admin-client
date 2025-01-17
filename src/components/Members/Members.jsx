@@ -6,6 +6,21 @@ import { Search, Edit2, Trash2 } from 'lucide-react';
 import { SERVER_URL } from '../../services/api';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
+import Navbar from '../Navbar/Navbar';
+
+/**
+ * TODO
+ * Have a loader while data is fetching
+ *
+ *TODO
+ *Add an svg for no data found
+
+ *TODO
+ *Add pagination
+
+*TODO
+*Add a confirm delete modal
+ */
 
 //Handling passing in correct mobile numbers
 const phoneRegex = new RegExp(
@@ -52,7 +67,7 @@ const Members = () => {
     setNewMember((prev) => ({ ...prev, [name]: value }));
   };
 
-  //Handling the form submittion
+  //Handling the form submittion/adding new member
   const onSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -80,6 +95,8 @@ const Members = () => {
 
       //Checking if the response is ok
       if (response.ok) {
+        //Adding a promise for fetching data
+        await fetchMembers();
         //Message from the backend
         toast.success(result.message);
       } else {
@@ -108,37 +125,62 @@ const Members = () => {
       }
 
       const data = await response.json();
-      setMembers(Array.isArray(data.members) ? data.members : []); // Ensure members is an array
+      setMembers(Array.isArray(data.members) ? data.members : []);
     } catch (error) {
       console.error('Error fetching members:', error);
     }
   };
 
   // Function to handle member deletion
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      'Are you sure you want to delete this member?'
-    );
-    if (!confirmDelete) return;
-
+  const handleDeleteMember = async (id) => {
     try {
       const response = await fetch(`${SERVER_URL}/members/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application.json',
+        },
       });
+      const result = await response.json();
 
-      if (!response.ok) {
-        throw new Error('Failed to delete member');
+      if (response.ok) {
+        setMembers((prevMembers) =>
+          prevMembers.filter((member) => member.id !== id)
+        );
+        toast.success(result.message);
+      } else {
+        const errorMessage = await response.text();
+        toast.error(`Failed to delete employee: ${errorMessage}`);
       }
-
-      // Remove member from state
-      setMembers((prevMembers) =>
-        prevMembers.filter((member) => member.id !== id)
-      );
     } catch (error) {
-      console.error('Error deleting member:', error);
-      alert('Failed to delete member. Please try again.');
+      console.error('Error deleting employee:', err);
+      toast.error('An error occurred while deleting the employee.');
     }
   };
+
+  // const handleDelete = async (id) => {
+  //   const confirmDelete = window.confirm(
+  //     'Are you sure you want to delete this member?'
+  //   );
+  //   if (!confirmDelete) return;
+
+  //   try {
+  //     const response = await fetch(`${SERVER_URL}/members/${id}`, {
+  //       method: 'DELETE',
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error('Failed to delete member');
+  //     }
+
+  //     // Remove member from state
+  //     setMembers((prevMembers) =>
+  //       prevMembers.filter((member) => member.id !== id)
+  //     );
+  //   } catch (error) {
+  //     console.error('Error deleting member:', error);
+  //     alert('Failed to delete member. Please try again.');
+  //   }
+  // };
 
   // Function to handle editing (to be implemented)
   const handleEdit = (id) => {
@@ -151,68 +193,71 @@ const Members = () => {
   }, []);
 
   return (
+    <div>
+    <Navbar/>
     <div className="members-page">
-      {/* Search Bar */}
+      {/* Search Bar
       <div className="search-bar">
         <Search size={20} />
         <input type="text" placeholder="Type to search" />
-      </div>
+      </div> */}
 
       {/* Registration Form */}
       <form className="registration-form" onSubmit={onSubmit}>
-  <div className="form-row">
-    <div>
-      <input
-        type="text"
-        name="f_name"
-        placeholder="John"
-        value={newMember.f_name}
-        onChange={handleChange}
-      />
-      {errors?.f_name && <p className="error-message">{errors.f_name}</p>}
-    </div>
+        <div className="form-row">
+          <div>
+            <input
+              type="text"
+              name="f_name"
+              placeholder="John"
+              value={newMember.f_name}
+              onChange={handleChange}
+            />
+            {errors?.f_name && <p className="error-message">{errors.f_name}</p>}
+          </div>
 
-    <div>
-      <input
-        type="text"
-        name="l_name"
-        placeholder="Doe"
-        value={newMember.l_name}
-        onChange={handleChange}
-      />
-      {errors?.l_name && <p className="error-message">{errors.l_name}</p>}
-    </div>
-  </div>
+          <div>
+            <input
+              type="text"
+              name="l_name"
+              placeholder="Doe"
+              value={newMember.l_name}
+              onChange={handleChange}
+            />
+            {errors?.l_name && <p className="error-message">{errors.l_name}</p>}
+          </div>
+        </div>
 
-  <div className="form-row">
-    <div>
-      <input
-        type="tel"
-        name="phone_number"
-        placeholder="0712345678"
-        value={newMember.phone_number}
-        onChange={handleChange}
-      />
-      {errors?.phone_number && <p className="error-message">{errors.phone_number}</p>}
-    </div>
+        <div className="form-row">
+          <div>
+            <input
+              type="tel"
+              name="phone_number"
+              placeholder="0712345678"
+              value={newMember.phone_number}
+              onChange={handleChange}
+            />
+            {errors?.phone_number && (
+              <p className="error-message">{errors.phone_number}</p>
+            )}
+          </div>
 
-    <div>
-      <input
-        type="email"
-        name="email"
-        placeholder="member@gmail.com"
-        value={newMember.email}
-        onChange={handleChange}
-      />
-      {errors?.email && <p className="error-message">{errors.email}</p>}
-    </div>
-  </div>
+          <div>
+            <input
+              type="email"
+              name="email"
+              placeholder="member@gmail.com"
+              value={newMember.email}
+              onChange={handleChange}
+            />
+            {errors?.email && <p className="error-message">{errors.email}</p>}
+          </div>
+        </div>
 
-  <button className="register-btn" type="submit" disabled={isSubmitting}>
-    {isSubmitting ? "Registering..." : "Register New Member"}
-  </button>
-</form>
-
+        <button className="register-btn" type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Registering...' : 'Register New Member'}
+        </button>
+      </form>
 
       {/* Members Table */}
       <div className="members-table">
@@ -243,7 +288,7 @@ const Members = () => {
                     </button>
                     <button
                       className="delete-btn"
-                      onClick={() => handleDelete(member.id)}
+                      onClick={() => handleDeleteMember(member.id)}
                     >
                       <Trash2 size={16} />
                     </button>
@@ -254,6 +299,7 @@ const Members = () => {
           </tbody>
         </table>
       </div>
+    </div>
     </div>
   );
 };

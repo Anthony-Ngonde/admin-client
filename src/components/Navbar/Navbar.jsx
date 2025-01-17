@@ -1,7 +1,7 @@
 
 import React from "react";
 import "./Navbar.css";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { LayoutDashboard, Users, CreditCard, LogOut, User } from 'lucide-react';
 
 const Navbar = () => {
@@ -17,30 +17,30 @@ const Navbar = () => {
       
       <ul className="nav-links">
         <li>
-          <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'active' : ''}>
+          <Link to="/" className={({ isActive }) => isActive ? 'active' : ''}>
             <LayoutDashboard size={20} />
             <span>Dashboard</span>
-          </NavLink>
+          </Link>
         </li>
         <li>
-          <NavLink to="/members" className={({ isActive }) => isActive ? 'active' : ''}>
+          <Link to="/members" className={({ isActive }) => isActive ? 'active' : ''}>
             <Users size={20} />
             <span>Members</span>
-          </NavLink>
+          </Link>
         </li>
         <li>
-          <NavLink to="/payment" className={({ isActive }) => isActive ? 'active' : ''}>
+          <Link to="/payments" className={({ isActive }) => isActive ? 'active' : ''}>
             <CreditCard size={20} />
             <span>Payment</span>
-          </NavLink>
+          </Link>
         </li>
       </ul>
 
       <div className="nav-footer">
-        <NavLink to="/logout" className="logout-link">
+        <Link to="/logout" className="logout-link">
           <LogOut size={20} />
           <span>Logout</span>
-        </NavLink>
+        </Link>
       </div>
     </nav>
   );

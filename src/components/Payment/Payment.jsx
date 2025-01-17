@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Navbar from '../Navbar/Navbar'
 import './Payment.css';
 import { Calendar, Edit2, Trash2 } from 'lucide-react';
 
@@ -113,6 +114,8 @@ const Payment = () => {
   };
 
   return (
+    <div>
+    <Navbar/>
     <div className="payment-page">
       {/* Payment Form */}
       <form className="payment-form" onSubmit={handleFormSubmit}>
@@ -228,6 +231,7 @@ const Payment = () => {
           </tbody>
         </table>
       </div>
+    </div>
     </div>
   );
 };

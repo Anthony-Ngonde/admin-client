@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
+import Navbar from '../Navbar/Navbar'
 import { Users } from "lucide-react";
 
 //Importing the server url
@@ -50,6 +51,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
+    <Navbar/>
       <div className="welcome-card">
         <h2>Welcome Back, TeeFlex Admin 👋</h2>
         <p>This is where you get all the summary</p>
