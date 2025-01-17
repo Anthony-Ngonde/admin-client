@@ -58,7 +58,7 @@ const Dashboard = () => {
   // Fetch notifications
   const fetchNotifications = async () => {
     try {
-      const response = await fetch("http://localhost:5000/notifications");
+      const response = await fetch(`${SERVER_URL}/notifications`);
       if (!response.ok) throw new Error("Failed to fetch notifications");
       const notificationsData = await response.json();
       setNotifications(notificationsData);
@@ -71,7 +71,7 @@ const Dashboard = () => {
   const markAsRead = async (id) => {
     try {
       setIsLoading(true);
-      const response = await fetch(`http://localhost:5000/notification/${id}`, {
+      const response = await fetch(`${SERVER_URL}/notification/${id}`, {
         method: "PATCH",
       });
       if (!response.ok) throw new Error("Failed to mark notification as read");
@@ -87,7 +87,7 @@ const Dashboard = () => {
   const deleteNotification = async (id) => {
     try {
       setIsLoading(true);
-      const response = await fetch(`http://localhost:5000/notification/${id}`, {
+      const response = await fetch(`${SERVER_URL}/notification/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) throw new Error("Failed to delete notification");
