@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
-import Navbar from '../Navbar/Navbar'
-import { Users,Bell } from "lucide-react";
+import Navbar from '../Navbar/Navbar';
+import { Users, Bell } from "lucide-react";
 
-//Importing the server url
+// Importing the server URL
 import { SERVER_URL } from "../../services/api";
 
 const Dashboard = () => {
@@ -41,7 +41,7 @@ const Dashboard = () => {
           throw new Error("Failed to fetch actives data");
         }
         const activesData = await activesResponse.json();
-        setActiveData(activesData);
+        setActiveData(activesData); // Includes the name field
 
         await fetchNotifications(); // Fetch notifications initially
       } catch (error) {
@@ -101,7 +101,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-    <Navbar/>
+      <Navbar />
       <div className="welcome-card">
         <h2>Welcome Back, TeeFlex Admin 👋</h2>
         <p>This is where you get all the summary</p>
@@ -177,6 +177,7 @@ const Dashboard = () => {
           <table>
             <thead>
               <tr>
+                <th>Name</th>
                 <th>Status</th>
                 <th>Date Paid</th>
                 <th>Expiry Date</th>
@@ -186,6 +187,7 @@ const Dashboard = () => {
             <tbody>
               {activeData.map((active) => (
                 <tr key={active.id}>
+                  <td>{active.name}</td>
                   <td>{active.status ? "Active" : "Inactive"}</td>
                   <td>{new Date(active.date_paid).toLocaleDateString()}</td>
                   <td>{new Date(active.expiry_date).toLocaleDateString()}</td>
@@ -201,11 +203,6 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-
-
-
-
 
 
 
