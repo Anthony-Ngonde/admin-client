@@ -193,6 +193,34 @@
   background-color: #e53935;
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.pagination-btn {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  margin: 0 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pagination-btn:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.pagination-btn.active {
+  background-color: #007bff;
+  color: #fff;
+  font-weight: bold;
+}
+
+
   
   
 

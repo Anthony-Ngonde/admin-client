@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
-import Navbar from '../Navbar/Navbar';
+import Navbar from "../Navbar/Navbar";
 import { Users, Bell } from "lucide-react";
 
 // Importing the server URL
@@ -14,45 +14,40 @@ const Dashboard = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [membersPerPage] = useState(10);
+
   // Fetch dashboard data
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        // Fetch total members
         const membersResponse = await fetch(`${SERVER_URL}/members`);
-        if (!membersResponse.ok) {
-          throw new Error("Failed to fetch total members");
-        }
+        if (!membersResponse.ok) throw new Error("Failed to fetch total members");
         const membersData = await membersResponse.json();
         setTotalMembers(membersData.members.length);
 
-        // Fetch active members
         const paymentsResponse = await fetch(`${SERVER_URL}/payments`);
-        if (!paymentsResponse.ok) {
-          throw new Error("Failed to fetch active members");
-        }
+        if (!paymentsResponse.ok) throw new Error("Failed to fetch active members");
         const paymentsData = await paymentsResponse.json();
         const uniqueActiveMembers = new Set(paymentsData.map((payment) => payment.member_id));
         setActiveMembers(uniqueActiveMembers.size);
 
-        // Fetch actives data
         const activesResponse = await fetch(`${SERVER_URL}/actives`);
-        if (!activesResponse.ok) {
-          throw new Error("Failed to fetch actives data");
-        }
+        if (!activesResponse.ok) throw new Error("Failed to fetch actives data");
         const activesData = await activesResponse.json();
-        setActiveData(activesData); // Includes the name field
+        setActiveData(activesData);
 
-        await fetchNotifications(); // Fetch notifications initially
+        await fetchNotifications();
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       }
     };
 
     fetchDashboardData();
-    const intervalId = setInterval(fetchNotifications, 10000); // Poll notifications every 10 seconds
+    const intervalId = setInterval(fetchNotifications, 10000);
 
-    return () => clearInterval(intervalId); // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   // Fetch notifications
@@ -67,37 +62,14 @@ const Dashboard = () => {
     }
   };
 
-  // Mark a notification as read
-  const markAsRead = async (id) => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(`${SERVER_URL}/notification/${id}`, {
-        method: "PATCH",
-      });
-      if (!response.ok) throw new Error("Failed to mark notification as read");
-      setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, is_read: true } : n)));
-    } catch (error) {
-      console.error("Error marking notification as read:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Pagination logic
+  const indexOfLastMember = currentPage * membersPerPage;
+  const indexOfFirstMember = indexOfLastMember - membersPerPage;
+  const currentMembers = activeData.slice(indexOfFirstMember, indexOfLastMember);
 
-  // Delete a notification
-  const deleteNotification = async (id) => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(`${SERVER_URL}/notification/${id}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) throw new Error("Failed to delete notification");
-      setNotifications((prev) => prev.filter((n) => n.id !== id));
-    } catch (error) {
-      console.error("Error deleting notification:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const totalPages = Math.ceil(activeData.length / membersPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div className="dashboard">
@@ -124,12 +96,6 @@ const Dashboard = () => {
                   <h4>{notification.title}</h4>
                   <p>{notification.message}</p>
                   <small>{new Date(notification.created_at).toLocaleString()}</small>
-                  <div className="notification-actions">
-                    {!notification.is_read && (
-                      <button onClick={() => markAsRead(notification.id)}>Mark as Read</button>
-                    )}
-                    <button onClick={() => deleteNotification(notification.id)}>Delete</button>
-                  </div>
                 </div>
               ))
             )}
@@ -161,18 +127,6 @@ const Dashboard = () => {
 
       <div className="members-section">
         <h3>Active Members</h3>
-        <div className="members-header">
-          <input type="text" placeholder="Search" className="search-input" />
-          <div className="sort-section">
-            <span>Sort By</span>
-            <div className="sort-headers">
-              <span>Date Paid</span>
-              <span>Expiry Date</span>
-              <span>Status</span>
-            </div>
-          </div>
-        </div>
-
         <div className="members-table">
           <table>
             <thead>
@@ -185,10 +139,10 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {activeData.map((active) => (
+              {currentMembers.map((active) => (
                 <tr key={active.id}>
                   <td>{active.name}</td>
-                  <td>{active.status ? "Active" : "Inactive"}</td>
+                  <td>{active.status ? "Active" : "Expired"}</td>
                   <td>{new Date(active.date_paid).toLocaleDateString()}</td>
                   <td>{new Date(active.expiry_date).toLocaleDateString()}</td>
                   <td>{active.user_id}</td>
@@ -196,6 +150,19 @@ const Dashboard = () => {
               ))}
             </tbody>
           </table>
+          <div className="pagination">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                className={`pagination-btn ${
+                  currentPage === page ? "active" : ""
+                }`}
+                onClick={() => paginate(page)}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -203,12 +170,6 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-
-
-
-
-
 
 
 
