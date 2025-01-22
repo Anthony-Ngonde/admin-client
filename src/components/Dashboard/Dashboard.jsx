@@ -9,7 +9,9 @@ import { SERVER_URL } from "../../services/api";
 const Dashboard = () => {
   const [totalMembers, setTotalMembers] = useState(0);
   const [activeMembers, setActiveMembers] = useState(0);
+  console.log(activeMembers);
   const [activeData, setActiveData] = useState([]);
+  console.log(activeData);
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,7 +68,7 @@ const Dashboard = () => {
   const indexOfLastMember = currentPage * membersPerPage;
   const indexOfFirstMember = indexOfLastMember - membersPerPage;
   const currentMembers = activeData.slice(indexOfFirstMember, indexOfLastMember);
-
+console.log(currentMembers);
   const totalPages = Math.ceil(activeData.length / membersPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -120,7 +122,7 @@ const Dashboard = () => {
           </div>
           <div className="metric-content">
             <h3>Active Members</h3>
-            <p>{activeMembers}</p>
+            <p>{activeData.length}</p>
           </div>
         </div>
       </div>
