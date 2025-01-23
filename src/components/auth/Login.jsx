@@ -206,7 +206,7 @@ function Login() {
         <p className={`text-sm  mt-4 text-white  `}>
           Don't have and account?{' '}
           <Link
-            to="/account/signup"
+            to="/register"
             className="text-[#019eff] font-bold hover:underline"
           >
             Sign in
