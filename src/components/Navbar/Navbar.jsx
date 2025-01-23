@@ -1,9 +1,34 @@
 import React from 'react';
 import './Navbar.css';
-import { Link } from 'react-router-dom';
+import { SERVER_URL } from '../../services/api';
+import { Link, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Users, CreditCard, LogOut, User } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const Navbar = ({ email }) => {
+  const token = localStorage.getItem('token');
+
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    try {
+      const response = await fetch(`${SERVER_URL}/logout`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const result = await response.json();
+      if (response.ok) {
+        toast.success(result.message);
+        navigate('/login');
+      } else if (response.status === 401) {
+        navigate('/login');
+      }
+    } catch (error) {
+      toast.error('Please try again');
+    }
+  };
+
   return (
     <nav className="navbar">
       <div className="nav-header">
@@ -42,51 +67,12 @@ const Navbar = ({ email }) => {
       </ul>
 
       <div className="nav-footer">
-        <Link to="/logout" className="logout-link">
-          <LogOut size={20} />
+        <button className="logout-link" onClick={handleLogout}>
           <span>Logout</span>
-        </Link>
+        </button>
       </div>
     </nav>
   );
 };
 
 export default Navbar;
-
-// import React from "react";
-// import { Link } from "react-router-dom";
-// import "./Navbar.css";
-// import { FaUser, FaTachometerAlt, FaUsers, FaMoneyBill, FaSignOutAlt } from "react-icons/fa";
-
-// const Navbar = () => {
-//   return (
-//     <div className="navbar">
-//       <div className="navbar-header">
-//         <FaUser className="user-icon" />
-//         <h3>TeeFlex Admin</h3>
-//         <p>admin@gmail.com</p>
-//       </div>
-//       <div className="navbar-links">
-//         <Link to="/" className="navbar-link">
-//           <FaTachometerAlt className="icon" />
-//           <span>Dashboard</span>
-//         </Link>
-//         <Link to="/members" className="navbar-link">
-//           <FaUsers className="icon" />
-//           <span>Members</span>
-//         </Link>
-//         {/* Added Link for Payment */}
-//         <Link to="/payment" className="navbar-link">
-//           <FaMoneyBill className="icon" />
-//           <span>Payment</span>
-//         </Link>
-//         <div className="navbar-link logout">
-//           <FaSignOutAlt className="icon" />
-//           <span>Logout</span>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Navbar;
