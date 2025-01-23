@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { z } from 'zod';
+import { date, z } from 'zod';
 import './Auth.css';
 
 //Importing the server url
@@ -74,6 +74,8 @@ function Login() {
       const result = await response.json();
       
       if (response.ok) {
+        const accessToken = result.token
+        localStorage.setItem("token",accessToken)
         toast.success(result.message);
         navigate('/');
       } else {
