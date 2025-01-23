@@ -1,35 +1,40 @@
-
-import React from "react";
-import "./Navbar.css";
-import { Link } from "react-router-dom";
+import React from 'react';
+import './Navbar.css';
+import { Link } from 'react-router-dom';
 import { LayoutDashboard, Users, CreditCard, LogOut, User } from 'lucide-react';
 
-const Navbar = () => {
+const Navbar = ({ email }) => {
   return (
     <nav className="navbar">
       <div className="nav-header">
         <User className="user-icon" />
         <div className="nav-title">
           <h2>TeeFlex Admin</h2>
-          <p>admin@gmail.com</p>
+          <p>{email}</p>
         </div>
       </div>
-      
+
       <ul className="nav-links">
         <li>
-          <Link to="/" className={({ isActive }) => isActive ? 'active' : ''}>
+          <Link to="/" className={({ isActive }) => (isActive ? 'active' : '')}>
             <LayoutDashboard size={20} />
             <span>Dashboard</span>
           </Link>
         </li>
         <li>
-          <Link to="/members" className={({ isActive }) => isActive ? 'active' : ''}>
+          <Link
+            to="/members"
+            className={({ isActive }) => (isActive ? 'active' : '')}
+          >
             <Users size={20} />
             <span>Members</span>
           </Link>
         </li>
         <li>
-          <Link to="/payments" className={({ isActive }) => isActive ? 'active' : ''}>
+          <Link
+            to="/payments"
+            className={({ isActive }) => (isActive ? 'active' : '')}
+          >
             <CreditCard size={20} />
             <span>Payment</span>
           </Link>
@@ -47,73 +52,6 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import React from "react";
 // import { Link } from "react-router-dom";
@@ -152,34 +90,3 @@ export default Navbar;
 // };
 
 // export default Navbar;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

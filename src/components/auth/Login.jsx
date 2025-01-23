@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, {  useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { date, z } from 'zod';
+import {  z } from 'zod';
 import './Auth.css';
 
 //Importing the server url
@@ -42,6 +42,7 @@ function Login() {
   //To handling navigating the user after successful server response
   const navigate = useNavigate();
 
+ 
   //Function to handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -74,7 +75,9 @@ function Login() {
       const result = await response.json();
       
       if (response.ok) {
-        const accessToken = result.token
+        const accessToken = result.access_token
+        
+        
         localStorage.setItem("token",accessToken)
         toast.success(result.message);
         navigate('/');
