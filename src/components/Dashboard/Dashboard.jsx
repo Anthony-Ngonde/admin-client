@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Dashboard.css';
+
 import Navbar from '../Navbar/Navbar';
 import { Users, Bell } from 'lucide-react';
 
@@ -14,6 +15,17 @@ const Dashboard = () => {
   //State to manage the total active members
   const [activeMembers, setActiveMembers] = useState([]);
 
+  //State for getting the full name of the admin
+  //TODO --> To refactor this code to be more less
+  const [fullName, setFullName] = useState([]);
+  const firstName = fullName.first_name;
+
+  const lastName = fullName.last_name;
+
+  const userName = `${firstName} ${lastName}`;
+
+  const email = fullName.email;
+
   //State to manage the notifications
   const [notifications, setNotifications] = useState([]);
 
@@ -27,12 +39,18 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [membersPerPage] = useState(10);
 
-  // Fetch dashboard data
   useEffect(() => {
     const fetchDashboardData = async () => {
+      const token = localStorage.getItem('token');
+
       try {
         //To await the response from the server
-        const membersResponse = await fetch(`${SERVER_URL}/members`);
+        const membersResponse = await fetch(`${SERVER_URL}/members`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         //Condition to check if the response from the server was a 200 or ok
         if (!membersResponse.ok)
@@ -43,7 +61,12 @@ const Dashboard = () => {
 
         setTotalMembers(membersData.members);
 
-        const activesResponse = await fetch(`${SERVER_URL}/actives`);
+        const activesResponse = await fetch(`${SERVER_URL}/actives`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         //Checking if server response is ok
         if (!activesResponse.ok)
@@ -52,6 +75,23 @@ const Dashboard = () => {
         //We then pass in the active members data
         const activesData = await activesResponse.json();
         setActiveMembers(activesData.active);
+
+        //Fetching the full name of the admin
+        const namesResponse = await fetch(`${SERVER_URL}/admin/name`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!namesResponse.ok) {
+          throw new Error('Failed to fetch the name of the admin');
+        }
+        //We then pass in the active members data
+
+        const adminName = await namesResponse.json();
+
+        setFullName(adminName);
 
         await fetchNotifications();
       } catch (error) {
@@ -84,16 +124,16 @@ const Dashboard = () => {
     indexOfFirstMember,
     indexOfLastMember
   );
-  console.log(currentMembers);
+
   const totalPages = Math.ceil(activeMembers.length / membersPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div className="dashboard">
-      <Navbar />
+      <Navbar email={email} />
       <div className="welcome-card">
-        <h2>Welcome Back, TeeFlex Admin 👋</h2>
+        <h2>Welcome Back, {userName} 👋</h2>
         <p>This is where you get all the summary</p>
         <div
           className="notification-bell"
