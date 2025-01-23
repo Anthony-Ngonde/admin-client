@@ -8,18 +8,11 @@ import { SERVER_URL } from '../../services/api';
 import Table from './Table';
 
 const Dashboard = () => {
-
   //State to manage the total members we have
   const [totalMembers, setTotalMembers] = useState([]);
-  console.log(totalMembers);
 
   //State to manage the total active members
   const [activeMembers, setActiveMembers] = useState([]);
-  console.log(activeMembers);
-
-
-  // const [activeData, setActiveData] = useState([]);
-  // console.log(activeData);
 
   //State to manage the notifications
   const [notifications, setNotifications] = useState([]);
@@ -38,7 +31,6 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        
         //To await the response from the server
         const membersResponse = await fetch(`${SERVER_URL}/members`);
 
@@ -46,27 +38,11 @@ const Dashboard = () => {
         if (!membersResponse.ok)
           throw new Error('Failed to fetch total members');
 
-        //If everything is ok we then pass in the members data from the backend 
+        //If everything is ok we then pass in the members data from the backend
         const membersData = await membersResponse.json();
-        console.log(membersData);
+
         setTotalMembers(membersData.members);
 
-        //Fetching the payments here too
-        // const paymentsResponse = await fetch(`${SERVER_URL}/payments`);
-
-        //Condition to check the response from the server
-        // if (!paymentsResponse.ok)
-        //   throw new Error('Failed to fetch active members');
-
-        //Pass in the data of the payments here
-        //TODO --> Check this logic
-        // const paymentsData = await paymentsResponse.json();
-        // const uniqueActiveMembers = new Set(
-        //   paymentsData.map((payment) => payment.member_id)
-        // );
-        // setActiveMembers(uniqueActiveMembers.size);
-
-        //Fetching the active members
         const activesResponse = await fetch(`${SERVER_URL}/actives`);
 
         //Checking if server response is ok
@@ -170,47 +146,12 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-<Table currentMembers={currentMembers} totalPages={totalPages} paginate={paginate} currentPage={currentPage}/>
-      {/* <div className="members-section">
-        <h3>Active Members</h3>
-        <div className="members-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Status</th>
-                <th>Date Paid</th>
-                <th>Expiry Date</th>
-                <th>User ID</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentMembers.map((active) => (
-                <tr key={active.id}>
-                  <td>{active.name}</td>
-                  <td>{active.status ? 'Active' : 'Expired'}</td>
-                  <td>{new Date(active.date_paid).toLocaleDateString()}</td>
-                  <td>{new Date(active.expiry_date).toLocaleDateString()}</td>
-                  <td>{active.user_id}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="pagination">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                className={`pagination-btn ${
-                  currentPage === page ? 'active' : ''
-                }`}
-                onClick={() => paginate(page)}
-              >
-                {page}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div> */}
+      <Table
+        currentMembers={currentMembers}
+        totalPages={totalPages}
+        paginate={paginate}
+        currentPage={currentPage}
+      />
     </div>
   );
 };
