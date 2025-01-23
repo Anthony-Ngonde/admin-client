@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import './Auth.css';
+import { Link } from 'react-router-dom';
 
 //Importing the server url
 import { SERVER_URL } from '../../services/api';
@@ -77,10 +78,9 @@ function Register() {
         },
         body: JSON.stringify(formData),
       });
-      
 
       const result = await response.json();
-      
+
       if (response.ok) {
         toast.success(result.message);
         navigate('/');
@@ -100,72 +100,82 @@ function Register() {
     }
   };
   return (
-    <div className="register-container">
-      <h2>Sign Up</h2>
-      <form onSubmit={onSubmit} className="register-form">
-        <div className="form-group">
-          <label>First Name</label>
-          <input
-            type="text"
-            name="first_name"
-            value={formData.first_name}
-            onChange={handleChange}
-            placeholder="Enter your first name"
-          />
-          {errors?.first_name && (
-            <p className="error-message">{errors.first_name}</p>
-          )}
-        </div>
-        <div className="form-group">
-          <label>Last Name</label>
-          <input
-            type="text"
-            name="last_name"
-            value={formData.last_name}
-            onChange={handleChange}
-            placeholder="Enter your last name"
-          />
-          {errors?.last_name && (
-            <p className="error-message">{errors.last_name}</p>
-          )}
-        </div>
-        <div className="form-group">
-          <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Enter your email"
-          />
-          {errors?.email && <p className="error-message">{errors.email}</p>}
-        </div>
-        <div className="form-group">
-          <label>Password</label>
-          <div className="password-container">
+    <div className="auth-container">
+      <div className="auth-box">
+        <h2>Sign Up</h2>
+        <form onSubmit={onSubmit} className="auth-form">
+          <div className="form-group">
+            <label>First Name</label>
             <input
-              type={showPassword ? 'text' : 'password'}
-              name="password"
-              value={formData.password}
+              type="text"
+              name="first_name"
+              value={formData.first_name}
               onChange={handleChange}
-              placeholder="Enter your password"
+              placeholder="Enter your first name"
             />
-            <button
-              type="button"
-              onClick={togglePasswordVisibility}
-              className="toggle-password"
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
+            {errors?.first_name && (
+              <p className="error-message">{errors.first_name}</p>
+            )}
           </div>
-          {errors?.password && (
-            <p className="error-message">{errors.password}</p>
-          )}
-        </div>
-        <button type="submit" className="submit-button" disabled={isLoading}>
-          {isLoading ? 'Signing Up...' : 'Sign Up'}
-        </button>
-      </form>
+          <div className="form-group">
+            <label>Last Name</label>
+            <input
+              type="text"
+              name="last_name"
+              value={formData.last_name}
+              onChange={handleChange}
+              placeholder="Enter your last name"
+            />
+            {errors?.last_name && (
+              <p className="error-message">{errors.last_name}</p>
+            )}
+          </div>
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter your email"
+            />
+            {errors?.email && <p className="error-message">{errors.email}</p>}
+          </div>
+          <div className="form-group">
+            <label>Password</label>
+            <div className="password-container">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Enter your password"
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="toggle-password"
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
+            {errors?.password && (
+              <p className="error-message">{errors.password}</p>
+            )}
+          </div>
+          <button type="submit" className="submit-button" disabled={isLoading}>
+            {isLoading ? 'Signing Up...' : 'Sign Up'}
+          </button>
+          <div className="auth-links">
+            <span>
+              Already have an account?{' '}
+              <Link to="/login" className="signup-link">
+                Sign In
+              </Link>
+            </span>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
