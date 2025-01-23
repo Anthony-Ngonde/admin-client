@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 
 import { SERVER_URL } from '../../services/api';
 import toast from 'react-hot-toast';
@@ -10,8 +11,12 @@ const loginSchema = z.object({
   password: z
     .string()
     .min(8, { message: 'Password must be at least 8 characters long' })
-    .regex(/[A-Z]/, { message: 'Password must include at least one uppercase letter' })
-    .regex(/[a-z]/, { message: 'Password must include at least one lowercase letter' })
+    .regex(/[A-Z]/, {
+      message: 'Password must include at least one uppercase letter',
+    })
+    .regex(/[a-z]/, {
+      message: 'Password must include at least one lowercase letter',
+    })
     .regex(/[0-9]/, { message: 'Password must include at least one number' }),
 });
 
@@ -64,49 +69,149 @@ function Login() {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-box">
-        <h2>Sign In</h2>
-        <form onSubmit={onSubmit} className="auth-form">
-          <div className="form-group">
-            <label>Email</label>
+    <div
+      className={`min-h-screen w-screen h-screen flex items-center justify-center bg-[#131312] text-white`}
+    >
+      <div
+        className={`
+            bg-[#131312] text-white border-gray-700
+            
+       p-6 rounded-lg shadow-lg w-5/6 max-w-sm border `}
+      >
+        <h2 className="text-2xl font-normal font-circular mb-6  hover:text-[#007bff]">
+          Welcome Back
+        </h2>
+        <h2 className="text-2xl font-bold  text-gray-700">Login</h2>
+        <p className="text-sm text-gray-600 mb-4">Sign in to your account</p>
+        <form onSubmit={onSubmit}>
+          <div className="mb-4">
+            <label
+              htmlFor="email"
+              className={`block text-sm font-medium 
+                 text-white  
+              `}
+            >
+              Email
+            </label>
             <input
               type="email"
               name="email"
+              id="email"
+              placeholder="you@example.com"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Enter your email"
+              className={`w-full bg-[#131312] text-white
+              } px-4 py-2 border border-gray-600  ${
+                errors.email ? 'border-red-500' : 'border-gray-300'
+              } rounded-lg text-sm focus:outline-none focus:ring-2 ${
+                errors.email ? 'focus:ring-red-500' : 'focus:ring-gray-500'
+              }`}
+              aria-invalid={!!errors.email}
+              aria-describedby="email_error"
             />
-            {errors?.email && <p className="error-message">{errors.email}</p>}
+            {errors.email && (
+              <p id="user_name_error" className="text-red-500 text-sm mt-1">
+                {errors.email}
+              </p>
+            )}
           </div>
-          <div className="form-group">
-            <label>Password</label>
-            <div className="password-container">
+          <div className="mb-4 relative">
+            <label
+              htmlFor="password"
+              className={`mb-1 block text-sm font-medium text-white`}
+            >
+              Password
+            </label>
+
+            <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
                 name="password"
+                id="password"
+                placeholder="********"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="Enter your password"
+                className={`w-full bg-[#131312] text-white
+                 px-4 py-2 pr-10 border ${
+                   errors.password ? 'border-red-500' : 'border-gray-600'
+                 } rounded-lg text-sm  focus:outline-none focus:ring-2 ${
+                  errors.password ? 'focus:ring-red-500' : 'focus:ring-gray-500'
+                }`}
+                aria-invalid={!!errors.password}
+                aria-describedby="password_error"
               />
-              <button
-                type="button"
-                onClick={togglePasswordVisibility}
-                className="toggle-password"
+              <span
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-300"
               >
-                {showPassword ? 'Hide' : 'Show'}
-              </button>
+                {showPassword ? (
+                  <AiFillEyeInvisible className="h-5 w-5" />
+                ) : (
+                  <AiFillEye className="h-5 w-5" />
+                )}
+              </span>
             </div>
-            {errors?.password && <p className="error-message">{errors.password}</p>}
+
+            <div className="flex justify-end mt-2 text-gray-600">
+              <Link
+                to="/forgot-password"
+                className="text-sm font-medium text-muted-foreground hover:opacity-75"
+              >
+                Forgot password?
+              </Link>
+            </div>
+
+            {errors.password && (
+              <p id="password_error" className="text-red-500 text-sm mt-1">
+                {errors.password}
+              </p>
+            )}
           </div>
-          <button type="submit" className="submit-button" disabled={isLoading}>
-            {isLoading ? 'Logging In...' : 'Sign In'}
+
+          <button
+            type="submit"
+            className={`w-full flex items-center justify-center bg-[#019eff] text-white py-2 rounded-lg hover:bg-[#007bff] focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              isLoading && 'opacity-50 cursor-not-allowed'
+            }`}
+            disabled={isLoading}
+            aria-busy={isLoading}
+          >
+            {isLoading ? (
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 2.419.876 4.623 2.334 6.291l1.666-1.666z"
+                />
+              </svg>
+            ) : (
+              'Login'
+            )}
           </button>
-          <div className="auth-links">
-            <a href="/forgot-password" className="forgot-password-link">Forgot Password?</a>
-            <span>Don't have an account? <Link to="/register" className="signup-link">Sign Up</Link></span>
-          </div>
         </form>
+
+        <p className={`text-sm  mt-4 text-white  `}>
+          Don't have and account?{' '}
+          <Link
+            to="/account/signup"
+            className="text-[#019eff] font-bold hover:underline"
+          >
+            Sign in
+          </Link>
+        </p>
       </div>
     </div>
   );
