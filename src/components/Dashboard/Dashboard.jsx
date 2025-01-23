@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import "./Dashboard.css";
-import Navbar from "../Navbar/Navbar";
-import { Users, Bell } from "lucide-react";
+import React, { useEffect, useState } from 'react';
+import './Dashboard.css';
+import Navbar from '../Navbar/Navbar';
+import { Users, Bell } from 'lucide-react';
 
 // Importing the server URL
-import { SERVER_URL } from "../../services/api";
+import { SERVER_URL } from '../../services/api';
 
 const Dashboard = () => {
   const [totalMembers, setTotalMembers] = useState(0);
@@ -25,24 +25,29 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
       try {
         const membersResponse = await fetch(`${SERVER_URL}/members`);
-        if (!membersResponse.ok) throw new Error("Failed to fetch total members");
+        if (!membersResponse.ok)
+          throw new Error('Failed to fetch total members');
         const membersData = await membersResponse.json();
         setTotalMembers(membersData.members.length);
 
         const paymentsResponse = await fetch(`${SERVER_URL}/payments`);
-        if (!paymentsResponse.ok) throw new Error("Failed to fetch active members");
+        if (!paymentsResponse.ok)
+          throw new Error('Failed to fetch active members');
         const paymentsData = await paymentsResponse.json();
-        const uniqueActiveMembers = new Set(paymentsData.map((payment) => payment.member_id));
+        const uniqueActiveMembers = new Set(
+          paymentsData.map((payment) => payment.member_id)
+        );
         setActiveMembers(uniqueActiveMembers.size);
 
         const activesResponse = await fetch(`${SERVER_URL}/actives`);
-        if (!activesResponse.ok) throw new Error("Failed to fetch actives data");
+        if (!activesResponse.ok)
+          throw new Error('Failed to fetch actives data');
         const activesData = await activesResponse.json();
         setActiveData(activesData);
 
         await fetchNotifications();
       } catch (error) {
-        console.error("Error fetching dashboard data:", error);
+        console.error('Error fetching dashboard data:', error);
       }
     };
 
@@ -56,19 +61,22 @@ const Dashboard = () => {
   const fetchNotifications = async () => {
     try {
       const response = await fetch(`${SERVER_URL}/notifications`);
-      if (!response.ok) throw new Error("Failed to fetch notifications");
+      if (!response.ok) throw new Error('Failed to fetch notifications');
       const notificationsData = await response.json();
       setNotifications(notificationsData);
     } catch (error) {
-      console.error("Error fetching notifications:", error);
+      console.error('Error fetching notifications:', error);
     }
   };
 
   // Pagination logic
   const indexOfLastMember = currentPage * membersPerPage;
   const indexOfFirstMember = indexOfLastMember - membersPerPage;
-  const currentMembers = activeData.slice(indexOfFirstMember, indexOfLastMember);
-console.log(currentMembers);
+  const currentMembers = activeData.slice(
+    indexOfFirstMember,
+    indexOfLastMember
+  );
+  console.log(currentMembers);
   const totalPages = Math.ceil(activeData.length / membersPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -84,7 +92,9 @@ console.log(currentMembers);
           onClick={() => setShowNotifications(!showNotifications)}
         >
           <Bell size={24} />
-          {notifications.some((n) => !n.is_read) && <span className="notification-dot" />}
+          {notifications.some((n) => !n.is_read) && (
+            <span className="notification-dot" />
+          )}
         </div>
         {showNotifications && (
           <div className="notifications-dropdown">
@@ -97,7 +107,9 @@ console.log(currentMembers);
                 <div key={notification.id} className="notification-item">
                   <h4>{notification.title}</h4>
                   <p>{notification.message}</p>
-                  <small>{new Date(notification.created_at).toLocaleString()}</small>
+                  <small>
+                    {new Date(notification.created_at).toLocaleString()}
+                  </small>
                 </div>
               ))
             )}
@@ -144,7 +156,7 @@ console.log(currentMembers);
               {currentMembers.map((active) => (
                 <tr key={active.id}>
                   <td>{active.name}</td>
-                  <td>{active.status ? "Active" : "Expired"}</td>
+                  <td>{active.status ? 'Active' : 'Expired'}</td>
                   <td>{new Date(active.date_paid).toLocaleDateString()}</td>
                   <td>{new Date(active.expiry_date).toLocaleDateString()}</td>
                   <td>{active.user_id}</td>
@@ -157,7 +169,7 @@ console.log(currentMembers);
               <button
                 key={page}
                 className={`pagination-btn ${
-                  currentPage === page ? "active" : ""
+                  currentPage === page ? 'active' : ''
                 }`}
                 onClick={() => paginate(page)}
               >
@@ -172,24 +184,3 @@ console.log(currentMembers);
 };
 
 export default Dashboard;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

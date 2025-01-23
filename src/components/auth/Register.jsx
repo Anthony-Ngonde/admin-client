@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-import './Register.css';
+import './Auth.css';
 
 //Importing the server url
 import { SERVER_URL } from '../../services/api';
@@ -19,7 +19,7 @@ const registerSchema = z.object({
     message: 'Invalid email address',
   }),
   password: z
-.string()
+    .string()
     .min(8, { message: 'Password must be at least 8 characters long' })
     .regex(/[A-Z]/, {
       message: 'Password must include at least one uppercase letter',
@@ -37,10 +37,10 @@ function Register() {
     email: '',
     password: '',
   });
-  console.log(formData);
+
   //State management for handling zode erros
   const [errors, setErrors] = useState({});
-console.log(errors);
+
   //Handling registration state of the button
   const [isLoading, setIsLoading] = useState(false);
 
@@ -77,10 +77,10 @@ console.log(errors);
         },
         body: JSON.stringify(formData),
       });
-      console.log(response);
+      
 
       const result = await response.json();
-      console.log(result);
+      
       if (response.ok) {
         toast.success(result.message);
         navigate('/');
@@ -94,7 +94,7 @@ console.log(errors);
           formattedErrors[error.path[0]] = error.message;
         });
         setErrors(formattedErrors);
-      } 
+      }
     } finally {
       setIsLoading(false);
     }
@@ -112,7 +112,9 @@ console.log(errors);
             onChange={handleChange}
             placeholder="Enter your first name"
           />
-           {errors?.first_name && <p className="error-message">{errors.first_name}</p>}
+          {errors?.first_name && (
+            <p className="error-message">{errors.first_name}</p>
+          )}
         </div>
         <div className="form-group">
           <label>Last Name</label>

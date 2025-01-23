@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-import './Register.css';
+import './Auth.css';
 
 //Importing the server url
 import { SERVER_URL } from '../../services/api';
@@ -29,10 +29,10 @@ function Login() {
     email: '',
     password: '',
   });
-  console.log(formData);
+
   //State management for handling zode erros
   const [errors, setErrors] = useState({});
-  console.log(errors);
+
   //Handling registration state of the button
   const [isLoading, setIsLoading] = useState(false);
 
