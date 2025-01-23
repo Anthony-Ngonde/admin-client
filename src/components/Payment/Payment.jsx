@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../Navbar/Navbar';
 import './Payment.css';
-import { Edit2, Trash2 } from 'lucide-react';
+
 
 // Importing the server URL
 import { SERVER_URL } from '../../services/api';
+import Form from './Form';
+import Table from './Table';
 
 const Payment = () => {
   const [paymentData, setPaymentData] = useState([]);
@@ -112,7 +114,7 @@ const Payment = () => {
       <Navbar />
       <div className="payment-page">
         {/* Payment Form */}
-        <form className="payment-form" onSubmit={handleFormSubmit}>
+        {/* <form className="payment-form" onSubmit={handleFormSubmit}>
           <div className="form-row">
             <input
               type="text"
@@ -170,11 +172,13 @@ const Payment = () => {
           >
             {isSubmitting ? 'Adding...' : 'Add Payment'}
           </button>
-        </form>
+        </form> */}
+<Form handleFormSubmit={handleFormSubmit} handleInputChange={handleInputChange} formData={formData} isSubmitting={isSubmitting}/>
 
         {/* Payment Table */}
+        
         <div className="payment-table">
-          <table>
+          {/* <table>
             <thead>
               <tr>
                 <th>Phone Number</th>
@@ -215,7 +219,8 @@ const Payment = () => {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table> */}
+          <Table currentPayments={currentPayments} handleDeletePayment={handleDeletePayment}/>
           {/* Pagination */}
           <div className="pagination">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
