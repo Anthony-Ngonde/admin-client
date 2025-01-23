@@ -72,7 +72,7 @@ function Login() {
       console.log(response);
 
       const result = await response.json();
-      console.log(result);
+      
       if (response.ok) {
         toast.success(result.message);
         navigate('/');
