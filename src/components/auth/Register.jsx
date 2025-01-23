@@ -83,7 +83,7 @@ function Register() {
 
       if (response.ok) {
         toast.success(result.message);
-        navigate('/');
+        navigate('/login');
       } else {
         toast.error(result.message);
       }

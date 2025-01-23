@@ -131,68 +131,72 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      <Navbar email={email} />
-      <div className="welcome-card">
-        <h2>Welcome Back, {userName} 👋</h2>
-        <p>This is where you get all the summary</p>
-        <div
-          className="notification-bell"
-          onClick={() => setShowNotifications(!showNotifications)}
-        >
-          <Bell size={24} />
-          {notifications.some((n) => !n.is_read) && (
-            <span className="notification-dot" />
+  <Navbar email={email} />
+
+  <div className="dashboard-header">
+    <div className="welcome-card">
+      <h2>Welcome Back, {userName} 👋</h2>
+      <p>This is where you get all the summary</p>
+    </div>
+
+    <div
+      className="notification-container"
+      onClick={() => setShowNotifications(!showNotifications)}
+    >
+      <Bell size={24} className="notification-bell-icon" />
+      {notifications.some((n) => !n.is_read) && (
+        <span className="notification-dot" />
+      )}
+      {showNotifications && (
+        <div className="notifications-dropdown">
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : notifications.length === 0 ? (
+            <p>No notifications</p>
+          ) : (
+            notifications.map((notification) => (
+              <div key={notification.id} className="notification-item">
+                <h4>{notification.title}</h4>
+                <p>{notification.message}</p>
+                <small>{new Date(notification.created_at).toLocaleString()}</small>
+              </div>
+            ))
           )}
         </div>
-        {showNotifications && (
-          <div className="notifications-dropdown">
-            {isLoading ? (
-              <p>Loading...</p>
-            ) : notifications.length === 0 ? (
-              <p>No notifications</p>
-            ) : (
-              notifications.map((notification) => (
-                <div key={notification.id} className="notification-item">
-                  <h4>{notification.title}</h4>
-                  <p>{notification.message}</p>
-                  <small>
-                    {new Date(notification.created_at).toLocaleString()}
-                  </small>
-                </div>
-              ))
-            )}
-          </div>
-        )}
-      </div>
-
-      <div className="metrics-container">
-        <div className="metric-card">
-          <div className="metric-icon">
-            <Users size={24} />
-          </div>
-          <div className="metric-content">
-            <h3>Total Members</h3>
-            <p>{totalMembers.length}</p>
-          </div>
-        </div>
-
-        <div className="metric-card">
-          <div className="metric-icon">
-            <Users size={24} />
-          </div>
-          <div className="metric-content">
-            <h3>Active Members</h3>
-            <p>{activeMembers.length}</p>
-          </div>
-        </div>
-      </div>
-      <Table
-        currentMembers={currentMembers}
-        totalPages={totalPages}
-        paginate={paginate}
-        currentPage={currentPage}
-      />
+      )}
     </div>
+  </div>
+
+  <div className="metrics-container">
+    <div className="metric-card">
+      <div className="metric-icon">
+        <Users size={24} />
+      </div>
+      <div className="metric-content">
+        <h3>Total Members</h3>
+        <p>{totalMembers.length}</p>
+      </div>
+    </div>
+
+    <div className="metric-card">
+      <div className="metric-icon">
+        <Users size={24} />
+      </div>
+      <div className="metric-content">
+        <h3>Active Members</h3>
+        <p>{activeMembers.length}</p>
+      </div>
+    </div>
+  </div>
+
+  <Table
+    currentMembers={currentMembers}
+    totalPages={totalPages}
+    paginate={paginate}
+    currentPage={currentPage}
+  />
+</div>
+
   );
 };
 

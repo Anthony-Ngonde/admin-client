@@ -2,7 +2,7 @@ import React from 'react';
 import './Navbar.css';
 import { SERVER_URL } from '../../services/api';
 import { Link, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, CreditCard, LogOut, User } from 'lucide-react';
+import { LayoutDashboard, Users, CreditCard, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const Navbar = ({ email }) => {
