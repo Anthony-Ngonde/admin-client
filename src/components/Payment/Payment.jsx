@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from '../Navbar/Navbar'
+import Navbar from '../Navbar/Navbar';
 import './Payment.css';
-import { Calendar, Edit2, Trash2 } from 'lucide-react';
 
-//Importing the server url
+
+// Importing the server URL
 import { SERVER_URL } from '../../services/api';
+import Form from './Form';
+import Table from './Table';
 
 const Payment = () => {
   const [paymentData, setPaymentData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [paymentsPerPage] = useState(10);
   const [formData, setFormData] = useState({
     phone_number: '',
     transaction_id: '',
@@ -35,6 +39,15 @@ const Payment = () => {
     fetchPaymentData();
   }, []);
 
+  // Pagination logic
+  const indexOfLastPayment = currentPage * paymentsPerPage;
+  const indexOfFirstPayment = indexOfLastPayment - paymentsPerPage;
+  const currentPayments = paymentData.slice(indexOfFirstPayment, indexOfLastPayment);
+
+  const totalPages = Math.ceil(paymentData.length / paymentsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -47,7 +60,6 @@ const Payment = () => {
   // Handle form submission
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-
     if (isSubmitting) return;
     setIsSubmitting(true);
 
@@ -65,19 +77,7 @@ const Payment = () => {
       }
 
       const newPayment = await response.json();
-
-      // Optimistically update the state with the new payment
-      setPaymentData((prevPayments) => [
-        ...prevPayments,
-        {
-          ...newPayment,
-          date: newPayment.date
-            ? new Date(newPayment.date).toISOString()
-            : new Date().toISOString(),
-        },
-      ]);
-
-      // Reset the form
+      setPaymentData((prevPayments) => [...prevPayments, newPayment]);
       setFormData({
         phone_number: '',
         transaction_id: '',
@@ -85,8 +85,6 @@ const Payment = () => {
         amount: '',
         date: '',
       });
-
-      // Refetch the payment data to ensure consistency
       fetchPaymentData();
     } catch (error) {
       console.error('Error adding payment:', error);
@@ -105,8 +103,6 @@ const Payment = () => {
       if (!response.ok) {
         throw new Error('Failed to delete payment');
       }
-
-      // Refetch the updated payment data after deletion
       fetchPaymentData();
     } catch (error) {
       console.error('Error deleting payment:', error);
@@ -115,53 +111,52 @@ const Payment = () => {
 
   return (
     <div>
-    <Navbar/>
-    <div className="payment-page">
-      {/* Payment Form */}
-      <form className="payment-form" onSubmit={handleFormSubmit}>
-        <div className="form-row">
-          <input
-            type="text"
-            name="phone_number"
-            placeholder="Phone Number"
-            value={formData.phone_number}
-            onChange={handleInputChange}
-            required
-          />
-          <input
-            type="text"
-            name="transaction_id"
-            placeholder="Transaction ID"
-            value={formData.transaction_id}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-row">
-          <select
-            name="plan"
-            value={formData.plan}
-            onChange={handleInputChange}
-            required
-          >
-            <option value="" disabled>
-              Plan
-            </option>
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-          </select>
-          <input
-            type="number"
-            name="amount"
-            placeholder="Amount"
-            value={formData.amount}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-row">
-          <div className="date-input">
+      <Navbar />
+      <div className="payment-page">
+        {/* Payment Form */}
+        {/* <form className="payment-form" onSubmit={handleFormSubmit}>
+          <div className="form-row">
+            <input
+              type="text"
+              name="phone_number"
+              placeholder="Phone Number"
+              value={formData.phone_number}
+              onChange={handleInputChange}
+              required
+            />
+            <input
+              type="text"
+              name="transaction_id"
+              placeholder="Transaction ID"
+              value={formData.transaction_id}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-row">
+            <select
+              name="plan"
+              value={formData.plan}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="" disabled>
+                Plan
+              </option>
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+            </select>
+            <input
+              type="number"
+              name="amount"
+              placeholder="Amount"
+              value={formData.amount}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-row">
             <input
               type="date"
               name="date"
@@ -170,67 +165,78 @@ const Payment = () => {
               required
             />
           </div>
-        </div>
-        <button
-          type="submit"
-          className="add-payment-btn"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? 'Adding...' : 'Add Payment'}
-        </button>
-      </form>
+          <button
+            type="submit"
+            className="add-payment-btn"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Adding...' : 'Add Payment'}
+          </button>
+        </form> */}
+<Form handleFormSubmit={handleFormSubmit} handleInputChange={handleInputChange} formData={formData} isSubmitting={isSubmitting}/>
 
-      {/* Payment Table */}
-      <div className="payment-table">
-        <table>
-          <thead>
-            <tr>
-              <th>Phone Number</th>
-              <th>Transaction ID</th>
-              <th>Plan</th>
-              <th>Amount</th>
-              <th>Date</th>
-              <th>Member ID</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paymentData.map((payment) => (
-              <tr key={payment.id}>
-                <td>{payment.phone_number}</td>
-                <td>{payment.transaction_id}</td>
-                <td>{payment.plan}</td>
-                <td>{payment.amount}</td>
-                <td>
-                  {payment.date
-                    ? new Date(payment.date).toLocaleDateString()
-                    : 'Invalid Date'}
-                </td>
-                <td>{payment.member_id}</td>
-                <td>
-                  <div className="action-buttons">
-                    <button
-                      className="edit-btn"
-                      onClick={() =>
-                        console.log('Edit feature not implemented')
-                      }
-                    >
-                      <Edit2 size={16} />
-                    </button>
-                    <button
-                      className="delete-btn"
-                      onClick={() => handleDeletePayment(payment.id)}
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </td>
+        {/* Payment Table */}
+        
+        <div className="payment-table">
+          {/* <table>
+            <thead>
+              <tr>
+                <th>Phone Number</th>
+                <th>Transaction ID</th>
+                <th>Plan</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Member ID</th>
+                <th>Action</th>
               </tr>
+            </thead>
+            <tbody>
+              {currentPayments.map((payment) => (
+                <tr key={payment.id}>
+                  <td>{payment.phone_number}</td>
+                  <td>{payment.transaction_id}</td>
+                  <td>{payment.plan}</td>
+                  <td>{payment.amount}</td>
+                  <td>
+                    {payment.date
+                      ? new Date(payment.date).toLocaleDateString()
+                      : 'Invalid Date'}
+                  </td>
+                  <td>{payment.member_id}</td>
+                  <td>
+                    <div className="action-buttons">
+                      <button className="edit-btn">
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        className="delete-btn"
+                        onClick={() => handleDeletePayment(payment.id)}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table> */}
+          <Table currentPayments={currentPayments} handleDeletePayment={handleDeletePayment}/>
+          {/* Pagination */}
+          <div className="pagination">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                className={`pagination-btn ${
+                  currentPage === page ? 'active' : ''
+                }`}
+                onClick={() => paginate(page)}
+              >
+                {page}
+              </button>
             ))}
-          </tbody>
-        </table>
+          </div>
+        </div>
       </div>
-    </div>
     </div>
   );
 };

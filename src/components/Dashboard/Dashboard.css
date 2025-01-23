@@ -110,13 +110,51 @@
   
   .notification-dot {
     position: absolute;
-    top: -5px;
-    right: -10px; /* Adjust position relative to the bell */
-    width: 10px;
+    top: 0;
+    right: 0;
     height: 10px;
+    width: 10px;
     background-color: red;
     border-radius: 50%;
-    display: none; /* Initially hidden */
+  }
+  
+  .notifications-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 20px;
+    width: 300px;
+    max-height: 400px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    z-index: 1000;
+  }
+  
+  .notifications-header {
+    padding: 10px;
+    background-color: #f4f4f4;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .notifications-list {
+    padding: 10px;
+  }
+  
+  .notification-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .notification-item:last-child {
+    border-bottom: none;
+  }
+  
+  .notification-actions {
+    margin-top: 5px;
+    display: flex;
+    gap: 10px;
   }
   /* Notification Actions Container */
 .notification-actions {
@@ -154,6 +192,34 @@
 .notification-actions button:last-of-type:hover {
   background-color: #e53935;
 }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.pagination-btn {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  margin: 0 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pagination-btn:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.pagination-btn.active {
+  background-color: #007bff;
+  color: #fff;
+  font-weight: bold;
+}
+
 
   
   
