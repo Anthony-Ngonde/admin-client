@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import './Members.css';
-import { Edit2, Trash2 } from 'lucide-react';
 
 // Importing the server URL
 import { SERVER_URL } from '../../services/api';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
 import Navbar from '../Navbar/Navbar';
+import Form from './Form';
+import Table from './Table';
+import Pagination from './Pagination';
 
 // Form validation for adding members
 const memberSchema = z.object({
@@ -113,109 +115,23 @@ const Members = () => {
     <div>
       <Navbar />
       <div className="members-page">
-        <form className="registration-form" onSubmit={onSubmit}>
-          <div className="form-row">
-            <div>
-              <input
-                type="text"
-                name="f_name"
-                placeholder="First Name"
-                value={newMember.f_name}
-                onChange={handleChange}
-              />
-              {errors?.f_name && <p className="error-message">{errors.f_name}</p>}
-            </div>
-            <div>
-              <input
-                type="text"
-                name="l_name"
-                placeholder="Last Name"
-                value={newMember.l_name}
-                onChange={handleChange}
-              />
-              {errors?.l_name && <p className="error-message">{errors.l_name}</p>}
-            </div>
-          </div>
-          <div className="form-row">
-            <div>
-              <input
-                type="tel"
-                name="phone_number"
-                placeholder="Phone Number"
-                value={newMember.phone_number}
-                onChange={handleChange}
-              />
-              {errors?.phone_number && (
-                <p className="error-message">{errors.phone_number}</p>
-              )}
-            </div>
-            <div>
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={newMember.email}
-                onChange={handleChange}
-              />
-              {errors?.email && <p className="error-message">{errors.email}</p>}
-            </div>
-          </div>
-          <button className="register-btn" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Registering...' : 'Register New Member'}
-          </button>
-        </form>
+        <Form
+          onSubmit={onSubmit}
+          newMember={newMember}
+          errors={errors}
+          handleChange={handleChange}
+          isSubmitting={isSubmitting}
+        />
 
-        <div className="members-table">
-          <table>
-            <thead>
-              <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Phone Number</th>
-                <th>Email Address</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentMembers.map((member) => (
-                <tr key={member.id}>
-                  <td>{member.f_name}</td>
-                  <td>{member.l_name}</td>
-                  <td>{member.phone_number}</td>
-                  <td>{member.email}</td>
-                  <td>
-                    <div className="action-buttons">
-                      <button
-                        className="edit-btn"
-                        onClick={() => alert(`Edit action for ${member.id}`)}
-                      >
-                        <Edit2 size={16} />
-                      </button>
-                      <button
-                        className="delete-btn"
-                        onClick={() => handleDeleteMember(member.id)}
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="pagination">
-          {[...Array(totalPages).keys()].map((num) => (
-            <button
-              key={num + 1}
-              className={`page-btn ${currentPage === num + 1 ? 'active' : ''}`}
-              onClick={() => handlePageChange(num + 1)}
-            >
-              {num + 1}
-            </button>
-          ))}
-        </div>
+        <Table
+          currentMembers={currentMembers}
+          handleDeleteMember={handleDeleteMember}
+        />
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          handlePageChange={handlePageChange}
+        />
       </div>
     </div>
   );
