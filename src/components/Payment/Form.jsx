@@ -1,5 +1,5 @@
 //This is the component to hold the form
-import './Payment.css';
+
 
 function Form({ handleFormSubmit, handleInputChange, formData, isSubmitting }) {
   return (

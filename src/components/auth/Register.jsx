@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-import './Auth.css';
 import { Link } from 'react-router-dom';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 //Importing the server url
 import { SERVER_URL } from '../../services/api';
 import toast from 'react-hot-toast';
+
+//Darkmode importation
+// import { DarkModeContext } from '../../context/DarkModeContext';
 
 //Zod form validation
 const registerSchema = z.object({
@@ -50,6 +53,8 @@ function Register() {
 
   //To handling navigating the user after successful server response
   const navigate = useNavigate();
+
+  // const { darkMode } = useContext(DarkModeContext);
 
   //Function to handle input change
   const handleChange = (e) => {
@@ -100,81 +105,181 @@ function Register() {
     }
   };
   return (
-    <div className="auth-container">
-      <div className="auth-box">
-        <h2>Sign Up</h2>
-        <form onSubmit={onSubmit} className="auth-form">
-          <div className="form-group">
-            <label>First Name</label>
+    <div
+      className={`min-h-screen flex items-center justify-center bg-[#131312] text-white  overflow-hidden`}
+    >
+      <div className="mx-auto p-4 rounded-lg shadow-lg w-5/6 max-w-sm border border-gray-700">
+        <h2 className="text-2xl font-bold mb-1 text-[#019eff] hover:text-[#007bff]">
+          Sign Up
+        </h2>
+        <form onSubmit={onSubmit}>
+          <div className="mb-4">
+            <label className="block text-sm text-white font-medium">
+              First Name
+            </label>
             <input
               type="text"
               name="first_name"
               value={formData.first_name}
               onChange={handleChange}
-              placeholder="Enter your first name"
+              className={`w-full 
+                bg-[#131312] text-white 
+              } px-4 py-2 border border-gray-600  ${
+                errors.first_name ? 'border-red-500' : 'border-gray-300'
+              } rounded-lg text-sm focus:outline-none focus:ring-2 ${
+                errors.first_name ? 'focus:ring-red-500' : 'focus:ring-gray-500'
+              }`}
+              placeholder="John"
             />
-            {errors?.first_name && (
-              <p className="error-message">{errors.first_name}</p>
+            {errors.first_name && (
+              <p id="email_error" className="text-red-500 text-sm mt-1">
+                {errors.first_name}
+              </p>
             )}
           </div>
-          <div className="form-group">
-            <label>Last Name</label>
+          <div className="mb-4">
+            <label
+              htmlFor="lastName"
+              className={`block text-sm font-medium 
+                text-white
+              }`}
+            >
+              Last Name
+            </label>
             <input
               type="text"
               name="last_name"
               value={formData.last_name}
               onChange={handleChange}
-              placeholder="Enter your last name"
+              className={`w-full  px-4 py-2 border border-gray-600 
+                 bg-[#131312] text-white
+              } ${
+                errors.last_name ? 'border-red-500' : 'border-gray-300'
+              } rounded-lg text-sm focus:outline-none focus:ring-2 ${
+                errors.last_name ? 'focus:ring-red-500' : 'focus:ring-gray-500'
+              }`}
+              aria-invalid={!!errors.last_name}
+              aria-describedby="user_name_error"
+              placeholder="Doe"
             />
-            {errors?.last_name && (
-              <p className="error-message">{errors.last_name}</p>
+            {errors.last_name && (
+              <p id="user_name_error" className="text-red-500 text-sm mt-1">
+                {errors.last_name}
+              </p>
             )}
           </div>
-          <div className="form-group">
-            <label>Email</label>
+          <div className="mb-4">
+            <label
+              className={`block text-sm font-medium 
+                text-white
+              }`}
+            >
+              Email
+            </label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
+              className={`w-full 
+               bg-[#131312] text-white'
+              } px-4 py-2 border border-gray-600  ${
+                errors.email ? 'border-red-500' : 'border-gray-300'
+              } rounded-lg text-sm focus:outline-none focus:ring-2 ${
+                errors.email ? 'focus:ring-red-500' : 'focus:ring-gray-500'
+              }`}
+              aria-invalid={!!errors.email}
+              aria-describedby="user_name_error"
             />
-            {errors?.email && <p className="error-message">{errors.email}</p>}
+            {errors.email && (
+              <p id="user_name_error" className="text-red-500 text-sm mt-1">
+                {errors.email}
+              </p>
+            )}
           </div>
-          <div className="form-group">
-            <label>Password</label>
-            <div className="password-container">
+          <div className="mb-4 relative">
+            <label
+              className={`block text-sm font-medium 
+                text-white
+              }`}
+            >
+              Password
+            </label>
+            <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="Enter your password"
+                placeholder="********"
+                className={`w-full  px-4 py-2 border border-gray-600
+                  bg-[#131312] text-white
+                } ${
+                  errors.password ? 'border-red-500' : 'border-gray-300'
+                } rounded-lg text-sm focus:outline-none focus:ring-2 ${
+                  errors.password ? 'focus:ring-red-500' : 'focus:ring-gray-500'
+                }`}
+                aria-invalid={!!errors.password}
+                aria-describedby="password_error"
               />
               <button
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500  "
                 type="button"
                 onClick={togglePasswordVisibility}
-                className="toggle-password"
               >
-                {showPassword ? 'Hide' : 'Show'}
+                {showPassword ? <FiEyeOff /> : <FiEye />}
               </button>
             </div>
-            {errors?.password && (
-              <p className="error-message">{errors.password}</p>
+            {errors.password && (
+              <p id="password_error" className="text-red-500 text-sm mt-1">
+                {errors.password}
+              </p>
             )}
           </div>
-          <button type="submit" className="submit-button" disabled={isLoading}>
-            {isLoading ? 'Signing Up...' : 'Sign Up'}
+          <button
+            type="submit"
+            className={`w-full bg-[#019eff] text-white py-2 rounded-lg flex items-center justify-center hover:bg-[#007bff] focus:outline-none focus:ring-2 focus:ring-gray-500 ${
+              isLoading && 'opacity-50 cursor-not-allowed'
+            }`}
+            disabled={isLoading}
+            aria-busy={isLoading}
+          >
+            {isLoading ? (
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 2.419.876 4.623 2.334 6.291l1.666-1.666z"
+                />
+              </svg>
+            ) : (
+              'Create an account'
+            )}
           </button>
-          <div className="auth-links">
-            <span>
-              Already have an account?{' '}
-              <Link to="/login" className="signup-link">
-                Sign In
-              </Link>
-            </span>
-          </div>
         </form>
+        <p className={`text-sm  mt-4 text-white`}>
+          Already have an account?{' '}
+          <Link
+            to="/login"
+            className="text-[#007bff] font-bold hover:underline"
+          >
+            Sign in
+          </Link>
+        </p>
       </div>
     </div>
   );

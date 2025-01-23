@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import './Members.css';
-
 // Importing the server URL
 import { SERVER_URL } from '../../services/api';
 import { z } from 'zod';

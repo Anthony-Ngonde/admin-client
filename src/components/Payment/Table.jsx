@@ -1,5 +1,5 @@
 //Component to display all the payment data
-import './Payment.css';
+
 import { Edit2, Trash2 } from 'lucide-react';
 
 function Table({ currentPayments, handleDeletePayment, totalPages }) {

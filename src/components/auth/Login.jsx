@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-import './Auth.css';
+
 import { SERVER_URL } from '../../services/api';
 import toast from 'react-hot-toast';
 

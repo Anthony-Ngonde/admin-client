@@ -1,5 +1,5 @@
 import React from 'react';
-import './Navbar.css';
+
 import { SERVER_URL } from '../../services/api';
 import { Link, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Users, CreditCard, User } from 'lucide-react';
