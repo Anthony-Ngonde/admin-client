@@ -1,242 +1,119 @@
+/* Navbar.css */
+
 .navbar {
-    width: 250px;
-    height: 100vh;
-    background-color: #000;
-    color: white;
-    padding: 20px;
-    position: fixed;
-    left: 0;
-    top: 0;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .nav-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 40px;
-  }
-  
-  .nav-title {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .nav-title h2 {
-    margin: 0;
-    font-size: 1.2rem;
-    color: #00b4d8;
-  }
-  
-  .nav-title p {
-    margin: 0;
-    font-size: 0.8rem;
-    color: #666;
-  }
-  
-  .nav-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    flex-grow: 1;
-  }
-  
-  .nav-links li {
-    margin-bottom: 10px;
-  }
-  
-  .nav-links a, .logout-link {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #fff;
-    text-decoration: none;
-    padding: 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-  }
-  
-  .nav-links a:hover, .logout-link:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .nav-links a.active {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #00b4d8;
-  }
-  
-  .nav-footer {
-    margin-top: auto;
-  }
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* General Styling */
-/* body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-  } */
-  
-  /* Navbar Container */
-  /* .navbar {
-    width: 250px;
-    height: 100vh;
-    background-color: #000;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-  } */
-  
-  /* Header Section */
-  /* .navbar-header {
-    text-align: center;
-    margin-bottom: 30px;
-  }
-  
-  .navbar-header .user-icon {
-    font-size: 40px;
-    margin-bottom: 10px;
-  }
-  
-  .navbar-header h3 {
-    font-size: 18px;
-    margin: 5px 0;
-  }
-  
-  .navbar-header p {
-    font-size: 14px;
-    color: #aaa;
-  }
-   */
-  /* Navigation Links */
-  /* .navbar-links {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+  width: 250px;
+  background: #1e293b;
+  color: #fff;
+  padding: 20px;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+.nav-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #334155;
+  padding-bottom: 20px;
+}
+
+.user-icon {
+  font-size: 2rem;
+  color: #38bdf8;
+}
+
+.nav-title h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.nav-title p {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.nav-links {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+  flex-grow: 1;
+}
+
+.nav-links li {
+  margin-bottom: 15px;
+}
+
+.nav-links a {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  text-decoration: none;
+  color: #cbd5e1;
+  font-size: 1rem;
+  padding: 10px 15px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.nav-links a:hover, .nav-links a.active {
+  background: #334155;
+  color: #38bdf8;
+}
+
+.nav-footer {
+  border-top: 1px solid #334155;
+  padding-top: 20px;
+}
+
+.logout-link {
+  background: transparent;
+  border: none;
+  color: #f87171;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: color 0.3s ease;
+}
+
+.logout-link:hover {
+  color: #ef4444;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .navbar {
     width: 100%;
-  }
-  
-  .navbar-link {
-    display: flex;
+    height: auto;
+    flex-direction: row;
     align-items: center;
-    padding: 10px 15px;
-    color: #fff;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+    padding: 15px;
   }
-  
-  .navbar-link:hover {
-    background-color: #111;
+
+  .nav-header {
+    border-bottom: none;
+    padding-bottom: 0;
   }
-  
-  .navbar-link .icon {
-    margin-right: 10px;
-    color: #00bfff;
+
+  .nav-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 0;
   }
-  
-  .navbar-link.logout {
-    margin-top: auto;
+
+  .nav-links li {
+    margin-bottom: 0;
   }
-   */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  .nav-footer {
+    border-top: none;
+    padding-top: 0;
+  }
+}
